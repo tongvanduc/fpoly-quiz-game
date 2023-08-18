@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         // Admin
         $this->command->warn(PHP_EOL . 'Creating admin user...');
         $user = $this->withProgressBar(1, fn () => User::factory(1)->create([
+            'uuid' => 1,
             'name' => 'Demo User',
             'email' => 'admin@fpt.edu.com',
         ]));
