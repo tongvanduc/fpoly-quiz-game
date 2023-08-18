@@ -64,7 +64,7 @@ class AuthenController extends Controller
 
             /** @var User $user */
             $user = User::create([
-                'uuid' => Str::uuid() . $request->machine_id,
+                'uuid' => $request->machine_id . '|' . time(),
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
