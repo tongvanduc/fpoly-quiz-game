@@ -79,15 +79,10 @@ class ContestResource extends Resource
                                     ->columns(2),
                             ]),
 
-                        Forms\Components\Section::make('Image')
-                            ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->label('Image')
-                                    ->required()
-                                    ->image()
-                                    ->disableLabel(),
-                            ])
-                            ->collapsible()
+                            Forms\Components\FileUpload::make('image')
+                                ->label('Image')
+                                ->required()
+                                ->image(),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -125,13 +120,13 @@ class ContestResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable(isIndividual: true)
+                    ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('code')
                     ->label('Code')
-                    ->searchable(isIndividual: true)
+                    ->searchable()
                     ->sortable()
                     ->toggleable(),
 
@@ -153,14 +148,11 @@ class ContestResource extends Resource
 
                 Tables\Columns\TextColumn::make('max_working_time')
                     ->label('Max working time')
-                    ->searchable()
                     ->sortable()
-                    ->toggleable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('max_of_tries')
                     ->label('Max of tries')
-                    ->searchable()
                     ->sortable()
                     ->toggleable(),
 
