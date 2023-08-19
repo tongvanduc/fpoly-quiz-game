@@ -81,7 +81,6 @@ class ContestResource extends Resource
 
                             Forms\Components\FileUpload::make('image')
                                 ->label('Image')
-                                ->required()
                                 ->image(),
                     ])
                     ->columnSpan(['lg' => 2]),
