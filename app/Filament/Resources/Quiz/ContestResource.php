@@ -58,7 +58,7 @@ class ContestResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make()
                                     ->schema([
-                                        Forms\Components\TextInput::make('max_working_time')
+                                        Forms\Components\TextInput::make('timer')
                                             ->gt(0)
                                             ->numeric()
                                             ->minValue(0)
@@ -151,7 +151,7 @@ class ContestResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('max_working_time')
+                Tables\Columns\TextColumn::make('timer')
                     ->label('Max working time')
                     ->searchable()
                     ->sortable()

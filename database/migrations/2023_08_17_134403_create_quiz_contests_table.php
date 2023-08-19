@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('code')->unique()->comment('Mã cuộc thi')->index();
             $table->dateTime('start_date')->nullable()->comment('Thời gian bắt đầu')->index();
             $table->dateTime('end_date')->nullable()->comment('Thời gian kết thúc')->index();
-            $table->unsignedTinyInteger('max_working_time')->nullable()->comment('Thời gian làm 1 câu, tính bằng giây');
+            $table->unsignedTinyInteger('timer')->nullable()->comment('Thời gian làm 1 câu, tính bằng giây');
             $table->unsignedTinyInteger('max_of_tries')->nullable()->comment('Số lần làm tối đa');
             $table->boolean('is_active')->default(true)->comment('Trạng thái hoạt động của cuộc thi')->index();
             $table->timestamps();
