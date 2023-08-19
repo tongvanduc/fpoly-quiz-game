@@ -14,4 +14,9 @@ class ContestQuestion extends Model
     protected $casts = [
         'correct_answers' => 'array'
     ];
+
+    public function contest_answers()
+    {
+        return $this->hasMany(ContestAnswer::class, 'quiz_contest_question_id');
+    }
 }

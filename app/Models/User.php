@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Quiz\Contest;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -34,5 +35,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->type_user === TYPE_USER_ADMIN;
+    }
+
+    public function contests()
+    {
+        return $this->hasMany(Contest::class);
     }
 }

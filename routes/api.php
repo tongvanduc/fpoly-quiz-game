@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthenController;
+use App\Http\Controllers\API\ContestController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +25,10 @@ Route::middleware('auth:sanctum')
 
         Route::post('logout', [AuthenController::class, 'logout']);
 
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
+        Route::prefix('contests')
+            ->group(function () {
+                Route::get('get-info/{code}', [ContestController::class, 'getInfoByCode']);
+                Route::get('get-result/{code}', [ContestController::class, 'getResultByCode']);
+                Route::get('get-list-by-user-id/{userID}', [ContestController::class, 'getListByUserID']);
+            });
     });

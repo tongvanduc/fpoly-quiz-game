@@ -15,6 +15,17 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthenController extends Controller
 {
+    public function getUser()
+    {
+        try {
+            return \response()->json([
+                'user' => \request()->user(),
+            ], Response::HTTP_OK);
+        } catch (\Exception $exception) {
+            return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function login(Request $request)
     {
         try {
@@ -42,9 +53,7 @@ class AuthenController extends Controller
                 'token' => $token->plainTextToken
             ], Response::HTTP_OK);
         } catch (\Exception $exception) {
-            Log::error('Exception', [$exception]);
-
-            return response()->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -80,9 +89,7 @@ class AuthenController extends Controller
                 'token' => $token->plainTextToken
             ], Response::HTTP_OK);
         } catch (\Exception $exception) {
-            Log::error('Exception', [$exception]);
-
-            return response()->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,11 +102,9 @@ class AuthenController extends Controller
             // Xóa thằng phiên đăng nhập hiện tại
             $user->currentAccessToken()->delete();
 
-            return \response()->json([], Response::HTTP_OK);
+            return \response()->json(data_when_error($exception), Response::HTTP_OK);
         } catch (\Exception $exception) {
-            Log::error('Exception', [$exception]);
-
-            return response()->json([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

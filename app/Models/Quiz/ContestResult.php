@@ -2,6 +2,7 @@
 
 namespace App\Models\Quiz;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,4 +15,9 @@ class ContestResult extends Model
     protected $casts = [
         'results' => 'array'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
