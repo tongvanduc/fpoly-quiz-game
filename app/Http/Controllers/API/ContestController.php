@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz\Contest;
+use App\Models\Quiz\ContestResult;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class ContestController extends Controller
 {
@@ -15,6 +15,7 @@ class ContestController extends Controller
      */
     public function __construct(
         public Contest $contest,
+        public ContestResult $contestResult,
     )
     {
 
@@ -23,7 +24,13 @@ class ContestController extends Controller
     public function getListByUserID($userID)
     {
         try {
-            $contests = $this->contest->query()->where('user_id', $userID)->get();
+            $contestIDs = $this->contestResult->query()
+                ->select('quiz_contest_id')
+                ->distinct()
+                ->where('user_id', $userID)
+                ->pluck('quiz_contest_id')->toArray();
+
+            $contests = $this->contest->query()->whereIn('id', $contestIDs)->get();
 
             return \response()->json([
                 'contests' => $contests

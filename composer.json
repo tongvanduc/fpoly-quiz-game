@@ -40,7 +40,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "helpers/const.php"
+            "helpers/const.php",
+            "helpers/functions.php"
         ]
     },
     "autoload-dev": {
