@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('quiz_contests', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('Tên cuộc thi');
-            $table->string('picture')->comment('Ảnh đại diện');
+            $table->string('image')->nullable()->comment('Ảnh đại diện');
             $table->string('code')->unique()->comment('Mã cuộc thi')->index();
             $table->dateTime('start_date')->nullable()->comment('Thời gian bắt đầu')->index();
             $table->dateTime('end_date')->nullable()->comment('Thời gian kết thúc')->index();

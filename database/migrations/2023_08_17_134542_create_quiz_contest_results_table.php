@@ -35,7 +35,7 @@ return new class extends Migration
                 ');
 
             $table->unsignedInteger('point')->comment('Tổng điểm làm được');
-
+            $table->unsignedInteger('total_time')->comment('Tổng thời gian, tính bằng giấy');
             $table->timestamps();
         });
     }
