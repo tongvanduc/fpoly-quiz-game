@@ -72,6 +72,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('number')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('customer.name')
                     ->searchable()
                     ->sortable()
