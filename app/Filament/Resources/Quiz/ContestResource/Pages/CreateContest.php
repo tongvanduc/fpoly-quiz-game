@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateContest extends CreateRecord
 {
     protected static string $resource = ContestResource::class;
+
+    protected static bool $canCreateAnother = false;
 }
