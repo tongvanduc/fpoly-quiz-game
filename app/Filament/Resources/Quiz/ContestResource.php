@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class ContestResource extends Resource
 {
@@ -40,15 +41,15 @@ class ContestResource extends Resource
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->autofocus()
+                                    ->placeholder('Name of the contest')
                                     ->live(onBlur: true),
 
                                 Forms\Components\TextInput::make('code')
                                     ->default(function (){
-                                        return Str::random(10);
+                                        return strtoupper(Str::random(8));
                                     })
                                     ->disabled()
                                     ->dehydrated()
-                                    ->required()
                                     ->unique(Contest::class, 'code', ignoreRecord: true),
                             ])
                             ->columns(2),
@@ -59,22 +60,30 @@ class ContestResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('max_working_time')
                                             ->gt(0)
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(255)
+                                            ->placeholder('Enter in seconds')
                                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
                                             ->required(),
 
                                         Forms\Components\TextInput::make('max_of_tries')
                                             ->gt(0)
-                                            ->maxValue(20)
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(255)
+                                            ->placeholder('Maximum number of attempts')
                                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
                                             ->required(),
                                     ])
                                     ->columns(2),
                             ]),
 
-                        Forms\Components\Section::make('Picture')
+                        Forms\Components\Section::make('Image')
                             ->schema([
-                                Forms\Components\FileUpload::make('picture')
-                                    ->label('Picture')
+                                Forms\Components\FileUpload::make('image')
+                                    ->label('Image')
+                                    ->required()
                                     ->image()
                                     ->disableLabel(),
                             ])
@@ -94,11 +103,13 @@ class ContestResource extends Resource
                                 Forms\Components\DateTimePicker::make('start_date')
                                     ->label('Start date')
                                     ->default(now())
+                                    ->seconds(false)
                                     ->required(),
 
                                 Forms\Components\DateTimePicker::make('end_date')
                                     ->label('End date')
                                     ->default(now())
+                                    ->seconds(false)
                                     ->afterOrEqual('start_date')
                                     ->required(),
                             ]),
@@ -115,31 +126,36 @@ class ContestResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
-                Tables\Columns\ImageColumn::make('picture')
-                    ->label('Picture')
-                    ->defaultImageUrl('https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('code')
                     ->label('Code')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
                     ->label('Start date')
-                    ->date('d-m-Y H:i:s')
-                    ->sortable(),
+                    ->date('d-m-Y H:i')
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('end_date')
                     ->label('End date')
-                    ->date()
-                    ->sortable(),
+                    ->date('d-m-Y H:i')
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('max_working_time')
                     ->label('Max working time')
                     ->searchable()
                     ->sortable()
+                    ->toggleable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('max_of_tries')
@@ -155,12 +171,43 @@ class ContestResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
+
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
                     ->boolean()
                     ->trueLabel('Active')
                     ->falseLabel('Passive')
                     ->native(true),
+
+                Tables\Filters\Filter::make('start_date')
+                    ->form([
+                        Forms\Components\DatePicker::make('start_date_form')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('start_date_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['start_date_form'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('start_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['start_date_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('start_date', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['start_date_form'] ?? null) {
+                            $indicators['start_date_form'] = 'Start date from ' . \Illuminate\Support\Carbon::parse($data['start_date_form'])->toFormattedDateString();
+                        }
+                        if ($data['start_date_until'] ?? null) {
+                            $indicators['start_date_until'] = 'Start date until ' . Carbon::parse($data['start_date_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
