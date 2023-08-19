@@ -17,11 +17,15 @@ class ContestQuestionResource extends Resource
 {
     protected static ?string $model = ContestQuestion::class;
 
-    protected static ?string $slug = 'quiz/contest-questions';
+    protected static ?string $slug = 'quiz/questions';
 
     protected static ?string $navigationGroup = 'Quiz';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Questions';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
