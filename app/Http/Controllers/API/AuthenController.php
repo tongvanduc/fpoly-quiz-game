@@ -8,9 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 class AuthenController extends Controller
@@ -99,7 +97,6 @@ class AuthenController extends Controller
             /** @var User $user */
             $user = \request()->user();
 
-            // Xóa thằng phiên đăng nhập hiện tại
             $user->currentAccessToken()->delete();
 
             return \response()->json(data_when_error($exception), Response::HTTP_OK);
