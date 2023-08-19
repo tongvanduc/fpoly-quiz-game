@@ -125,18 +125,18 @@ class ContestResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('code')
+                    ->label('Code')
+                    ->searchable(isIndividual: true)
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
-                    ->toggleable(),
-
-                Tables\Columns\TextColumn::make('code')
-                    ->label('Code')
-                    ->searchable()
-                    ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
@@ -171,7 +171,6 @@ class ContestResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
-
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
                     ->boolean()
