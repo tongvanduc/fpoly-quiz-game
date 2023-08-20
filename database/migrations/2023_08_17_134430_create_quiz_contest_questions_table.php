@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('title_origin')->comment('Tiêu đề câu hỏi');
             $table->string('image')->nullable()->comment('Hình ảnh câu hỏi');
             $table->text('title_extra')->nullable()->comment('Tiêu đề bổ sung, thằng này ở bên dưới ảnh');
-            $table->json('correct_answers')->comment('Lưu ID của bảng quiz_contest_answers, đầu vào là 1 mảng ID');
+            $table->json('correct_answers')->nullable()->comment('Lưu ID của bảng quiz_contest_answers, đầu vào là 1 mảng ID');
             $table->text('explain')->nullable()->comment('Giải thích câu trả lời');
             $table->boolean('is_active')->default(true)->comment('Trạng thái hoạt động của câu hỏi')->index();
             $table->timestamps();

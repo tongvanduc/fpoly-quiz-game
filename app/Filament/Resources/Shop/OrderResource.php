@@ -84,7 +84,7 @@ class OrderResource extends Resource
                         'success' => fn ($state) => in_array($state, ['delivered', 'shipped']),
                     ]),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn ($record): ?string => Currency::find($record->currency)?->name ?? null)
+//                    ->getStateUsing(fn ($record): ?string => Currency::find($record->currency)?->name ?? null)
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -315,7 +315,8 @@ class OrderResource extends Resource
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $query) => Currency::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
                 ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->getAttribute('name'))
-                ->required(),
+//                ->required()
+            ,
 
             AddressForm::make('address')
                 ->columnSpan('full'),
