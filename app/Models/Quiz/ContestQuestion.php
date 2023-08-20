@@ -13,13 +13,9 @@ class ContestQuestion extends Model
 
     protected $table = 'quiz_contest_questions';
 
-    protected $casts = [
-        'correct_answers' => 'array'
-    ];
-
     public function contest_answers(): HasMany
     {
-        return $this->hasMany(ContestAnswer::class,'id', 'quiz_contest_question_id');
+        return $this->hasMany(ContestAnswer::class,'quiz_contest_question_id');
     }
 
     //dung belongs to lay ra list contests

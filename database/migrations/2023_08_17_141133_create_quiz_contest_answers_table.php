@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('quiz_contest_question_id')->index();
             $table->text('content')->comment('Nội dung câu trả lời');
             $table->unsignedTinyInteger('order')->default(0)->comment('Sắp xếp câu trả lời');
+            $table->boolean('is_true')->default(false)->comment('Đáp án');
             $table->boolean('is_active')->default(true)->comment('Trạng thái hoạt động của câu trả lời')->index();
             $table->timestamps();
         });

@@ -18,20 +18,14 @@ return new class extends Migration
 
             /*
              $results = [
-                '1' => [
-                    'quiz_contest_answer_ids' => [1, 2, 3],
-                    'correct_answers' => [2, 3]
-                ],
-                '2' => [
-                    'quiz_contest_answer_ids' => [5, 7],
-                    'correct_answers' => [4, 5]
-                ],
+                '1' => [1, 2, 3],
+                '2' => [5, 7],
             ];
              * */
             $table->json('results')
                 ->comment('Cấu trúc json:
-                    {"1":{"quiz_contest_answer_ids":[1,2,3],"correct_answers":[2,3]},"2":{"quiz_contest_answer_ids":[5,7],"correct_answers":[4,5]}};
-                    key: lưu ID của câu hỏi, bên trong lưu 2 mảng: quiz_contest_answer_ids là mảng kết quả chọn của thí sinh, correct_answers: mảng lưu câu trả lời đúng
+                    {"1":[1,2,3],"2":[5,7]}
+                    key: lưu ID của câu hỏi, value là mảng kết quả chọn của thí sinh
                 ');
 
             $table->unsignedInteger('point')->comment('Tổng điểm làm được');

@@ -3,18 +3,12 @@
 namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
-
-//use App\Filament\Resources\Quiz\ContestQuestionResource\RelationManagers;
-use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestQuestion;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Actions\Action;
 
 class ContestQuestionResource extends Resource
 {
@@ -22,12 +16,13 @@ class ContestQuestionResource extends Resource
 
     protected static ?string $slug = 'quiz/contest/questions';
 
+    protected static ?string $label = 'Questions';
+
     protected static ?string $recordTitleAttribute = 'title_origin';
 
     protected static ?string $navigationGroup = 'Quiz';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?string $navigationLabel = 'Questions';
 
     protected static ?int $navigationSort = 1;
@@ -47,7 +42,7 @@ class ContestQuestionResource extends Resource
                     ])
                     ->columnSpan(['lg' => fn(?ContestQuestion $record) => $record === null ? 3 : 2]),
             ])
-            ->columns(1);
+            ->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -114,23 +109,33 @@ class ContestQuestionResource extends Resource
         if ($section === 'answers') {
             return [
                 Forms\Components\Repeater::make('contest_answers')
-                    ->relationship('contest_answers')
+                    ->relationship()
                     ->schema([
-                        Forms\Components\TextInput::make('Content')
+                        Forms\Components\TextInput::make('content')
                             ->required()
+                            ->label('Content')
                             ->placeholder('Answer content')
                             ->columnSpan([
                                 'md' => 5,
                             ]),
 
-                        Forms\Components\TextInput::make('Order')
+                        Forms\Components\TextInput::make('order')
                             ->gt(0)
+                            ->label('Order')
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(255)
                             ->placeholder('Enter order')
                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
                             ->required()
+                            ->columnSpan([
+                                'md' => 1,
+                            ]),
+
+                        Forms\Components\Toggle::make('is_true')
+                            ->label('Is true')
+                            ->helperText('Correct answer')
+                            ->default(false)
                             ->columnSpan([
                                 'md' => 2,
                             ]),
