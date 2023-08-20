@@ -2,6 +2,7 @@
 
 namespace App\Models\Quiz;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,5 +23,13 @@ class ContestQuestion extends Model
     public function contests(): BelongsTo
     {
         return $this->belongsTo(Contest::class, 'quiz_contest_id');
+    }
+
+    /**
+     * Scope a query to only include active users.
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true);
     }
 }
