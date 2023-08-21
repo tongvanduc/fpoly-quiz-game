@@ -78,8 +78,6 @@ class AuthenController extends Controller
                 'type_user' => TYPE_USER_STUDENT,
             ]);
 
-            event(new Registered($user));
-
             $token = $user->createToken(__CLASS__);
 
             return \response()->json([

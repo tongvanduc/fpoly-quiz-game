@@ -8,6 +8,10 @@ use App\Models\Blog\Author;
 use App\Models\Blog\Category as BlogCategory;
 use App\Models\Blog\Post;
 use App\Models\Comment;
+use App\Models\Quiz\Contest;
+use App\Models\Quiz\ContestAnswer;
+use App\Models\Quiz\ContestQuestion;
+use App\Models\Quiz\ContestResult;
 use App\Models\Shop\Brand;
 use App\Models\Shop\Category as ShopCategory;
 use App\Models\Shop\Customer;
@@ -34,13 +38,67 @@ class DatabaseSeeder extends Seeder
         Storage::deleteDirectory('public');
 
         // Admin
-        $this->command->warn(PHP_EOL . 'Creating admin user...');
-        $user = $this->withProgressBar(1, fn () => User::factory(1)->create([
+        $this->command->warn(PHP_EOL . 'Creating Admin User...');
+        $this->withProgressBar(1, fn() => User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@fpt.edu.com',
+            'type_user' => TYPE_USER_ADMIN,
         ]));
-        $this->command->info('Admin user created.');
-//
+        $this->command->info('Admin User created.');
+
+        // Student
+        $this->command->warn(PHP_EOL . 'Creating Student User...');
+        $this->withProgressBar(1, fn() => User::factory(10)->create([
+            'type_user' => TYPE_USER_STUDENT,
+        ]));
+        $this->command->info('Student User created.');
+
+        // Contest
+        $this->command->warn(PHP_EOL . 'Creating Contest ...');
+        $this->withProgressBar(1, fn() => Contest::factory(10)->create());
+        $this->command->info('Contest user created.');
+
+        $this->command->warn(PHP_EOL . 'Creating Contest Question ...');
+        foreach (Contest::all() as $contest) {
+            ContestQuestion::factory(10)->create([
+                'quiz_contest_id' => $contest->id
+            ]);
+        }
+        $this->command->info('Contest Question created.');
+
+        $this->command->warn(PHP_EOL . 'Creating Contest Answer ...');
+        foreach (ContestQuestion::all() as $contestQuestion) {
+            for ($i = 0; $i < 10; $i++) {
+                ContestAnswer::factory(4)->create([
+                    'quiz_contest_question_id' => $contestQuestion->id
+                ]);
+            }
+        }
+        $this->command->info('Contest Answer created.');
+
+        $this->command->warn(PHP_EOL . 'Creating Contest Result ...');
+        foreach (User::all() as $user) {
+            foreach (Contest::all() as $contest) {
+                $data = [
+                    'user_id' => $user->id,
+                    'quiz_contest_id' => $contest->id,
+                    'point' => 10,
+                    'total_time' => 300,
+                ];
+
+                foreach (ContestQuestion::with('contest_answers')->where('quiz_contest_id', $contest->id)->get() as $contestQuestion) {
+                    $data['results'][$contestQuestion->id] = [
+                        $contestQuestion->contest_answers->first()->id,
+                        $contestQuestion->contest_answers->last()->id,
+                    ];
+                }
+
+                ContestResult::query()->create($data);
+            }
+        }
+
+        $this->command->info('Contest Result created.');
+
 //        // Blog
 //        $this->command->warn(PHP_EOL . 'Creating blog categories...');
 //        $blogCategories = $this->withProgressBar(20, fn () => BlogCategory::factory(1)

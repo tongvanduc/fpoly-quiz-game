@@ -28,8 +28,8 @@ return new class extends Migration
                     key: lưu ID của câu hỏi, value là mảng kết quả chọn của thí sinh
                 ');
 
-            $table->unsignedInteger('point')->comment('Tổng điểm làm được');
-            $table->unsignedInteger('total_time')->comment('Tổng thời gian, tính bằng giấy');
+            $table->unsignedFloat('point')->comment('Tổng điểm làm được');
+            $table->unsignedFloat('total_time')->comment('Tổng thời gian, tính bằng giấy');
             $table->timestamps();
         });
     }

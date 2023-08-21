@@ -15,6 +15,10 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
+        if ($request->json() && !auth()->check()) {
+            abort(401);
+        }
+
         return Filament::getLoginUrl();
     }
 }

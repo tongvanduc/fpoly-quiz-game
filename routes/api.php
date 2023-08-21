@@ -1,9 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthenController;
-use App\Http\Controllers\API\ContestController;
-use App\Http\Controllers\API\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\Quiz\ContestController;
+use App\Http\Controllers\API\Quiz\ContestResultController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +27,12 @@ Route::middleware('auth:sanctum')
         Route::prefix('contests')
             ->group(function () {
                 Route::get('get-info/{code}', [ContestController::class, 'getInfoByCode']);
-                Route::get('get-result/{code}', [ContestController::class, 'getResultByCode']);
+                Route::get('get-result/{code}/{userID?}', [ContestController::class, 'getResultByCode']);
                 Route::get('get-list-by-user-id/{userID}', [ContestController::class, 'getListByUserID']);
+            });
+
+        Route::prefix('contest_results')
+            ->group(function () {
+                Route::post('/', [ContestResultController::class, 'store']);
             });
     });

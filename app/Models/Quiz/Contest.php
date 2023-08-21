@@ -2,6 +2,7 @@
 
 namespace App\Models\Quiz;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,9 +13,9 @@ class Contest extends Model
 
     protected $table = 'quiz_contests';
 
-    public function contest_result()
+    public function contest_results()
     {
-        return $this->hasOne(ContestResult::class, 'quiz_contest_id');
+        return $this->hasMany(ContestResult::class, 'quiz_contest_id');
     }
 
     public function contest_questions()
@@ -28,5 +29,12 @@ class Contest extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true);
+    }
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string|null $value) => asset($value),
+        );
     }
 }
