@@ -26,7 +26,13 @@ class ContestController extends Controller
     public function getInfoByCode($code)
     {
         try {
-            $contest = $this->contest->query()->active()->where('code', $code)->firstOrFail();
+            $contest = $this->contest->query()
+                ->active()
+                ->with([
+                    'contest_questions',
+                    'contest_questions.contest_answers'
+                ])
+                ->where('code', $code)->firstOrFail();
 
             return \response()->json([
                 'contest' => $contest,
