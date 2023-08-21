@@ -68,11 +68,9 @@ class DatabaseSeeder extends Seeder
 
         $this->command->warn(PHP_EOL . 'Creating Contest Answer ...');
         foreach (ContestQuestion::all() as $contestQuestion) {
-            for ($i = 0; $i < 10; $i++) {
-                ContestAnswer::factory(1)->create([
-                    'quiz_contest_question_id' => $contestQuestion->id
-                ]);
-            }
+            ContestAnswer::factory(4)->create([
+                'quiz_contest_question_id' => $contestQuestion->id
+            ]);
         }
         $this->command->info('Contest Answer created.');
 
