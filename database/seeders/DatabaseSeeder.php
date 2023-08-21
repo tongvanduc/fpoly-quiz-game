@@ -39,23 +39,23 @@ class DatabaseSeeder extends Seeder
 
         // Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
-        $this->withProgressBar(1, fn() => User::factory(1)->create([
+        User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@fpt.edu.com',
             'type_user' => TYPE_USER_ADMIN,
-        ]));
+        ]);
         $this->command->info('Admin User created.');
 
         // Student
         $this->command->warn(PHP_EOL . 'Creating Student User...');
-        $this->withProgressBar(1, fn() => User::factory(10)->create([
+        User::factory(10)->create([
             'type_user' => TYPE_USER_STUDENT,
-        ]));
+        ]);
         $this->command->info('Student User created.');
 
         // Contest
         $this->command->warn(PHP_EOL . 'Creating Contest ...');
-        $this->withProgressBar(1, fn() => Contest::factory(10)->create());
+        Contest::factory(10)->create();
         $this->command->info('Contest user created.');
 
         $this->command->warn(PHP_EOL . 'Creating Contest Question ...');

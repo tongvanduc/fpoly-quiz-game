@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Quiz;
 
+use App\Models\Quiz\ContestAnswer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ContestAnswerFactory extends Factory
 {
+    protected $model = ContestAnswer::class;
+
     /**
      * Define the model's default state.
      *
