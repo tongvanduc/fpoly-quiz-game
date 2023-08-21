@@ -19,7 +19,7 @@ class Contest extends Model
 
     public function contest_questions()
     {
-        return $this->hasMany(ContestQuestion::class, 'quiz_contest_id');
+        return $this->hasMany(ContestQuestion::class, 'quiz_contest_id')->active();
     }
 
     /**

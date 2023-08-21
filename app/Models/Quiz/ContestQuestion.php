@@ -16,13 +16,13 @@ class ContestQuestion extends Model
 
     public function contest_answers(): HasMany
     {
-        return $this->hasMany(ContestAnswer::class,'quiz_contest_question_id');
+        return $this->hasMany(ContestAnswer::class,'quiz_contest_question_id')->active();
     }
 
     //dung belongs to lay ra list contests
     public function contests(): BelongsTo
     {
-        return $this->belongsTo(Contest::class, 'quiz_contest_id');
+        return $this->belongsTo(Contest::class, 'quiz_contest_id')->active();
     }
 
     /**
