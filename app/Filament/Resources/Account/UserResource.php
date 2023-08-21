@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Account;
 
 use App\Filament\Resources\Account\UserResource\Pages;
-//use App\Filament\Resources\Account\UserResource\RelationManagers;
+use App\Filament\Resources\Account\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -53,7 +53,8 @@ class UserResource extends Resource
                     ->label('Email verification')
                     ->sortable()
                     ->toggleable()
-                    ->getStateUsing(fn (User $record): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                    ->getStateUsing(fn(User $record
+                    ): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
                     ->colors([
                         'success' => 'Verified',
                         'danger' => 'Unverified',
@@ -83,46 +84,41 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                Components\Section::make()
+                Components\Section::make('Personal information')
                     ->schema([
-                        Components\Grid::make(2)
-                            ->schema([
-                                Components\Group::make([
-                                    Components\TextEntry::make('title'),
-                                    Components\TextEntry::make('slug'),
-                                    Components\TextEntry::make('published_at')
-                                        ->badge()
-                                        ->date()
-                                        ->color('success'),
-                                ]),
-                                Components\Group::make([
-                                    Components\TextEntry::make('author.name'),
-                                    Components\TextEntry::make('category.name'),
-                                    Components\TextEntry::make('tags')
-                                        ->badge()
-                                        ->getStateUsing(fn () => ['one', 'two', 'three', 'four']),
-                                ]),
-                            ]),
-                        Components\ImageEntry::make('image')
-                            ->hiddenLabel()
-                            ->grow(false),
+                        Components\Split::make([
+                            Components\Grid::make(2)
+                                ->schema([
+                                    Components\Group::make([
+                                        Components\TextEntry::make('name'),
+                                        Components\TextEntry::make('email'),
+                                    ]),
 
+                                    Components\Group::make([
+                                        Components\TextEntry::make('email_verified_at')
+                                            ->label('Email verification')
+                                            ->badge()
+                                            ->getStateUsing(fn(User $record
+                                            ): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                                            ->color('success'),
+
+                                        Components\TextEntry::make('type_user')
+                                            ->label('Type user')
+                                            ->badge()
+                                            ->colors([
+                                                'success'
+                                            ]),
+                                    ]),
+                                ]),
+                        ])->from('lg'),
                     ]),
-                    Components\Section::make('Content')
-                    ->schema([
-                        Components\TextEntry::make('content')
-                            ->prose()
-                            ->markdown()
-                            ->hiddenLabel(),
-                    ])
-                    ->collapsible(),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ContestsRelationManager::class,
         ];
     }
 

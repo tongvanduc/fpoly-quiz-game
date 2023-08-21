@@ -16,8 +16,13 @@ class ContestResult extends Model
         'results' => 'array'
     ];
 
+    public function contest()
+    {
+        return $this->belongsTo(Contest::class, 'quiz_contest_id');
+    }
+
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
