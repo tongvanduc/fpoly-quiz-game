@@ -23,6 +23,7 @@ class ContestQuestionResource extends Resource
     protected static ?string $navigationGroup = 'Quiz';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationLabel = 'Questions';
 
     protected static ?int $navigationSort = 1;

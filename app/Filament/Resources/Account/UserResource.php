@@ -25,7 +25,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Account';
 
+    protected static ?string $label = 'Users';
+
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationLabel = 'Users';
 
     protected static ?int $navigationSort = 0;
 
@@ -45,20 +49,30 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('type_user')
-                    ->label('Type user')
-                    ->searchable()
+                Tables\Columns\BadgeColumn::make('email_verified_at')
+                    ->label('Email verification')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->getStateUsing(fn (User $record): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                    ->colors([
+                        'success' => 'Verified',
+                        'danger' => 'Unverified',
+                    ]),
 
-                Tables\Columns\IconColumn::make('email_verified_at')
-                    ->label('Is active')
-                    ->boolean()
+                Tables\Columns\BadgeColumn::make('type_user')
+                    ->label('Type user')
                     ->sortable()
+                    ->colors([
+                        'success'
+                    ])
                     ->toggleable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('Email verification')
+                    ->nullable()
+                    ->trueLabel('Verified')
+                    ->falseLabel('Unverified'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
