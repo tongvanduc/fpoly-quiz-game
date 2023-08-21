@@ -29,8 +29,8 @@ class ContestController extends Controller
             $contest = $this->contest->query()
                 ->active()
                 ->with([
-                    'contest_questions',
-                    'contest_questions.contest_answers'
+                    'contest_questions_only_active',
+                    'contest_questions_only_active.contest_answers_only_active'
                 ])
                 ->where('code', $code)->firstOrFail();
 
@@ -54,8 +54,8 @@ class ContestController extends Controller
                         });
                     },
                     'contest_results.user',
-                    'contest_questions',
-                    'contest_questions.contest_answers'
+                    'contest_questions_only_active',
+                    'contest_questions_only_active.contest_answers_only_active'
                 ])
                 ->where('code', $code)
                 ->firstOrFail();
