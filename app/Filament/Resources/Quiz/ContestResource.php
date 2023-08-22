@@ -146,7 +146,7 @@ class ContestResource extends Resource
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('timer')
-                    ->label('Max working time')
+                    ->label('Timer')
                     ->sortable()
                     ->toggleable(),
 

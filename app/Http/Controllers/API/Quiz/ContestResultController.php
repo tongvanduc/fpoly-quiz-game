@@ -48,6 +48,20 @@ class ContestResultController extends Controller
                 return response($validator->errors(), Response::HTTP_BAD_REQUEST);
             }
 
+            $contest = $this->contest->query()->find($request->quiz_contest_id);
+            $contestResultCount = $this->contestResult->query()
+                ->where([
+                    'user_id' => $request->user_id,
+                    'quiz_contest_id' => $request->quiz_contest_id,
+                ])
+                ->count();
+
+            if ($contest->max_of_tries < $contestResultCount) {
+                return response([
+                    'max_of_tries' => [__('max_of_tries')]
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
             $this->contestResult->query()->create($request->all());
 
             return \response()->json([], Response::HTTP_OK);
