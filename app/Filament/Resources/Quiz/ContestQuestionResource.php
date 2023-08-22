@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
+use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestQuestion;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -166,7 +167,9 @@ class ContestQuestionResource extends Resource
 
         return [
             Forms\Components\Select::make('quiz_contest_id')
-                ->relationship('Contests', 'name')
+                ->label('Contest')
+                ->options(Contest::all()->pluck('name', 'id'))
+                ->searchable()
                 ->required(),
 
             Forms\Components\Toggle::make('is_active')
