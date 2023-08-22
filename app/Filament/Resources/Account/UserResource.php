@@ -3,17 +3,13 @@
 namespace App\Filament\Resources\Account;
 
 use App\Filament\Resources\Account\UserResource\Pages;
-use App\Filament\Resources\Account\UserResource\RelationManagers;
+use App\Models\Quiz\ContestResult;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Infolists\Components;
+use Illuminate\Support\Facades\DB;
+
 
 class UserResource extends Resource
 {
@@ -33,8 +29,19 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    protected static string $view = 'filament.resources.users.pages.view-user';
+
     public static function table(Table $table): Table
     {
+//        $query = ContestResult::query()
+//            ->whereIn(DB::raw('(user_id, quiz_contest_id, point)'), function ($query) {
+//                $query->select('user_id', 'quiz_contest_id', DB::raw('MAX(point)'))
+//                    ->from('quiz_contest_results')
+//                    ->groupBy('user_id', 'quiz_contest_id');
+//            })->where('user_id', $this->user->id);
+//
+//        $table->query($query);
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
@@ -53,8 +60,8 @@ class UserResource extends Resource
                     ->label('Email verification')
                     ->sortable()
                     ->toggleable()
-                    ->getStateUsing(fn(User $record
-                    ): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                    ->getStateUsing(fn(User $user
+                    ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
                     ->colors([
                         'success' => 'Verified',
                         'danger' => 'Unverified',
@@ -80,45 +87,10 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Components\Section::make('Personal information')
-                    ->schema([
-                        Components\Split::make([
-                            Components\Grid::make(2)
-                                ->schema([
-                                    Components\Group::make([
-                                        Components\TextEntry::make('name'),
-                                        Components\TextEntry::make('email'),
-                                    ]),
-
-                                    Components\Group::make([
-                                        Components\TextEntry::make('email_verified_at')
-                                            ->label('Email verification')
-                                            ->badge()
-                                            ->getStateUsing(fn(User $record
-                                            ): string => $record->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
-                                            ->color('success'),
-
-                                        Components\TextEntry::make('type_user')
-                                            ->label('Type user')
-                                            ->badge()
-                                            ->colors([
-                                                'success'
-                                            ]),
-                                    ]),
-                                ]),
-                        ])->from('lg'),
-                    ]),
-            ]);
-    }
-
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ContestsRelationManager::class,
+
         ];
     }
 
@@ -126,7 +98,7 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'view' => Pages\ViewUser::route('/{record}'),
+            'view' => Pages\ViewUserDetail::route('/{record}'),
         ];
     }
 }
