@@ -33,15 +33,6 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
-//        $query = ContestResult::query()
-//            ->whereIn(DB::raw('(user_id, quiz_contest_id, point)'), function ($query) {
-//                $query->select('user_id', 'quiz_contest_id', DB::raw('MAX(point)'))
-//                    ->from('quiz_contest_results')
-//                    ->groupBy('user_id', 'quiz_contest_id');
-//            })->where('user_id', $this->user->id);
-//
-//        $table->query($query);
-
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
