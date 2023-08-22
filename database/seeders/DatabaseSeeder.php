@@ -2,23 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Filament\Resources\Shop\OrderResource;
-use App\Models\Address;
-use App\Models\Blog\Author;
-use App\Models\Blog\Category as BlogCategory;
-use App\Models\Blog\Post;
-use App\Models\Comment;
 use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestAnswer;
 use App\Models\Quiz\ContestQuestion;
 use App\Models\Quiz\ContestResult;
-use App\Models\Shop\Brand;
-use App\Models\Shop\Category as ShopCategory;
-use App\Models\Shop\Customer;
-use App\Models\Shop\Order;
-use App\Models\Shop\OrderItem;
-use App\Models\Shop\Payment;
-use App\Models\Shop\Product;
 use App\Models\User;
 use Closure;
 use Filament\Notifications\Actions\Action;
@@ -39,23 +26,23 @@ class DatabaseSeeder extends Seeder
 
         // Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
-        $this->withProgressBar(1, fn() => User::factory(1)->create([
+        User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@fpt.edu.com',
             'type_user' => TYPE_USER_ADMIN,
-        ]));
+        ]);
         $this->command->info('Admin User created.');
 
         // Student
         $this->command->warn(PHP_EOL . 'Creating Student User...');
-        $this->withProgressBar(1, fn() => User::factory(10)->create([
+        User::factory(10)->create([
             'type_user' => TYPE_USER_STUDENT,
-        ]));
+        ]);
         $this->command->info('Student User created.');
 
         // Contest
         $this->command->warn(PHP_EOL . 'Creating Contest ...');
-        $this->withProgressBar(1, fn() => Contest::factory(10)->create());
+        Contest::factory(10)->create();
         $this->command->info('Contest user created.');
 
         $this->command->warn(PHP_EOL . 'Creating Contest Question ...');
@@ -68,11 +55,9 @@ class DatabaseSeeder extends Seeder
 
         $this->command->warn(PHP_EOL . 'Creating Contest Answer ...');
         foreach (ContestQuestion::all() as $contestQuestion) {
-            for ($i = 0; $i < 10; $i++) {
-                ContestAnswer::factory(1)->create([
-                    'quiz_contest_question_id' => $contestQuestion->id
-                ]);
-            }
+            ContestAnswer::factory(4)->create([
+                'quiz_contest_question_id' => $contestQuestion->id
+            ]);
         }
         $this->command->info('Contest Answer created.');
 

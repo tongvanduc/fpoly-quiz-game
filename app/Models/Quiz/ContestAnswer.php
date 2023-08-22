@@ -14,6 +14,11 @@ class ContestAnswer extends Model
 
     public function contest_questions()
     {
+        return $this->belongsTo(ContestAnswer::class, 'quiz_contest_question_id');
+    }
+
+    public function contest_questions_only_active()
+    {
         return $this->belongsTo(ContestAnswer::class, 'quiz_contest_question_id')->active();
     }
 

@@ -17,11 +17,20 @@ class ContestQuestion extends Model
 
     public function contest_answers(): HasMany
     {
+        return $this->hasMany(ContestAnswer::class, 'quiz_contest_question_id');
+    }
+
+    public function contest_answers_only_active(): HasMany
+    {
         return $this->hasMany(ContestAnswer::class, 'quiz_contest_question_id')->active();
     }
 
-    //dung belongs to lay ra list contests
     public function contests(): BelongsTo
+    {
+        return $this->belongsTo(Contest::class, 'quiz_contest_id');
+    }
+
+    public function contests_only_active(): BelongsTo
     {
         return $this->belongsTo(Contest::class, 'quiz_contest_id')->active();
     }
@@ -32,12 +41,5 @@ class ContestQuestion extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true);
-    }
-
-    protected function image(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string|null $value) => asset($value),
-        );
     }
 }

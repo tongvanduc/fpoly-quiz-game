@@ -20,6 +20,11 @@ class Contest extends Model
 
     public function contest_questions()
     {
+        return $this->hasMany(ContestQuestion::class, 'quiz_contest_id');
+    }
+
+    public function contest_questions_only_active()
+    {
         return $this->hasMany(ContestQuestion::class, 'quiz_contest_id')->active();
     }
 
@@ -29,12 +34,5 @@ class Contest extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true);
-    }
-
-    protected function image(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string|null $value) => asset($value),
-        );
     }
 }
