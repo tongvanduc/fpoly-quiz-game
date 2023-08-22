@@ -59,15 +59,13 @@ class ContestQuestionResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
-                    ->toggleable()
-                    ->visibleFrom('md'),
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('title_extra')
                     ->label('Title Extra')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->visibleFrom('md')
                     ->wrap(),
 
                 Tables\Columns\IconColumn::make('is_active')
@@ -75,8 +73,7 @@ class ContestQuestionResource extends Resource
                     ->searchable()
                     ->boolean()
                     ->sortable()
-                    ->toggleable()
-                    ->visibleFrom('md'),
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
