@@ -41,11 +41,9 @@ class ViewUserDetail extends Page implements HasTable
     protected function getHeaderWidgets(): array
     {
         return [
-            UserInformationWidget::make(
-                [
-                    'user' => $this->user,
-                ]
-            ),
+            UserInformationWidget::make([
+                'user' => $this->user,
+            ]),
         ];
     }
 
