@@ -32,6 +32,8 @@ class ContestResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    public ?Contest $contest;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -202,6 +204,8 @@ class ContestResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                ,
                 Tables\Actions\EditAction::make(),
             ])
             ->emptyStateActions([
@@ -229,6 +233,7 @@ class ContestResource extends Resource
             'index' => Pages\ListContests::route('/'),
             'create' => Pages\CreateContest::route('/create'),
             'edit' => Pages\EditContest::route('/{record}/edit'),
+            'view' => Pages\ViewContestQuestion::route('/{record}'),
         ];
     }
 }
