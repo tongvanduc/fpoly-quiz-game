@@ -38,9 +38,4 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return $this->type_user === TYPE_USER_ADMIN;
     }
-
-    public function contests()
-    {
-        return $this->hasMany(Contest::class);
-    }
 }
