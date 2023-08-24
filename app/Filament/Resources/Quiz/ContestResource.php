@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Quiz;
 use App\Filament\Resources\Quiz\ContestResource\Pages;
 use App\Filament\Resources\Quiz\ContestResource\Widgets\ContestStats;
 use App\Models\Quiz\Contest;
+use App\Models\Quiz\ContestQuestion;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -31,8 +32,6 @@ class ContestResource extends Resource
     protected static ?string $navigationLabel = 'Contests';
 
     protected static ?int $navigationSort = 0;
-
-    public ?Contest $contest;
 
     public static function form(Form $form): Form
     {
@@ -101,6 +100,7 @@ class ContestResource extends Resource
                                 Forms\Components\DateTimePicker::make('start_date')
                                     ->label('Start date')
                                     ->default(now())
+                                    ->afterOrEqual(now()->format('d-m-Y H'))
                                     ->seconds(false)
                                     ->required(),
 
@@ -165,6 +165,7 @@ class ContestResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
@@ -204,12 +205,23 @@ class ContestResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                ,
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('show')
+                    ->action(fn (ContestQuestion $record) => $record->all())
+                    ->label('Questions')
+                    ->icon('heroicon-m-eye')
+                    ->color('gray')
+                    ->modalSubmitAction(false)
+                    ->modalDescription('Đây là danh sách câu hỏi')
+                    ->modalContent(view('filament.shows.question')),
+
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ]);
     }
 
@@ -231,9 +243,6 @@ class ContestResource extends Resource
     {
         return [
             'index' => Pages\ListContests::route('/'),
-            'create' => Pages\CreateContest::route('/create'),
-            'edit' => Pages\EditContest::route('/{record}/edit'),
-            'view' => Pages\ViewContestQuestion::route('/{record}'),
         ];
     }
 }

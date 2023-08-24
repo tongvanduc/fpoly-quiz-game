@@ -18,20 +18,7 @@ class CreateContestQuestion extends CreateRecord
 
     protected static string $resource = ContestQuestionResource::class;
 
-    protected function getSteps(): array
-    {
-        return [
-            Step::make('Question')
-                ->schema([
-                    Section::make()->schema(ContestQuestionResource::getFormSchema())->columns(),
-                ]),
 
-            Step::make('Answer')
-                ->schema([
-                    Section::make()->schema(ContestQuestionResource::getFormSchema('answers')),
-                ]),
-        ];
-    }
 
     protected function getRedirectUrl(): string
     {
