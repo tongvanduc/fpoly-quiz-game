@@ -6,6 +6,7 @@ use App\Filament\Resources\Quiz\ContestResource;
 use Filament\Pages\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables;
 
 class ListContests extends ListRecords
 {
@@ -16,7 +17,9 @@ class ListContests extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->modalWidth('5xl')
+                ->slideOver(),
         ];
     }
 

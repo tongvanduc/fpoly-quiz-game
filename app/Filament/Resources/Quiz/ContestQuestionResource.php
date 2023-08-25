@@ -6,6 +6,8 @@ use App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
 use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestQuestion;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,18 +35,85 @@ class ContestQuestionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->schema(static::getFormSchema())
-                            ->columns(2),
+                Forms\Components\Select::make('quiz_contest_id')
+                    ->label('Contest')
+                    ->options(Contest::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
 
-                        Forms\Components\Section::make('Answer')
-                            ->schema(static::getFormSchema('answers')),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Is active')
+                    ->helperText('This question will be hidden from the contest')
+                    ->inline(false)
+                    ->default(true),
+
+                Forms\Components\Textarea::make('title_origin')
+                    ->columnSpan('full')
+                    ->placeholder('Enter question title here')
+                    ->required(),
+
+                Forms\Components\FileUpload::make('image')
+                    ->label('Image')
+                    ->image()
+                    ->columnSpan('full'),
+
+                Forms\Components\Textarea::make('title_extra')
+                    ->placeholder('Add more questions if any')
+                    ->columnSpan('full'),
+
+                Forms\Components\Textarea::make('explain')
+                    ->placeholder('Explain the answer if any')
+                    ->columnSpan('full'),
+
+                Forms\Components\Repeater::make('contest_answers')
+                    ->label('Answers')
+                    ->relationship()
+                    ->schema([
+                        Forms\Components\TextInput::make('content')
+                            ->required()
+                            ->label('Content')
+                            ->placeholder('Answer content')
+                            ->columnSpan([
+                                'md' => 5,
+                            ]),
+
+                        Forms\Components\TextInput::make('order')
+                            ->gt(0)
+                            ->label('Order')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(255)
+                            ->placeholder('Enter order')
+                            ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
+                            ->required()
+                            ->columnSpan([
+                                'md' => 1,
+                            ]),
+
+                        Forms\Components\Toggle::make('is_true')
+                            ->label('Is true')
+                            ->helperText('Correct answer')
+                            ->default(false)
+                            ->columnSpan([
+                                'md' => 2,
+                            ]),
+
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Is active')
+                            ->helperText('This answer will be hidden from the question.')
+                            ->default(true)
+                            ->columnSpan([
+                                'md' => 2,
+                            ]),
                     ])
-                    ->columnSpan(['lg' => fn(?ContestQuestion $record) => $record === null ? 3 : 2]),
-            ])
-            ->columns(2);
+                    ->deletable(false)
+                    ->defaultItems(1)
+                    ->columns([
+                        'md' => 10
+                    ])
+                    ->columnSpan('full')
+                    ->required(),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -76,6 +145,7 @@ class ContestQuestionResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
@@ -105,93 +175,6 @@ class ContestQuestionResource extends Resource
             'index' => Pages\ListContestQuestions::route('/'),
             'create' => Pages\CreateContestQuestion::route('/create'),
             'edit' => Pages\EditContestQuestion::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getFormSchema(string $section = null): array
-    {
-        if ($section === 'answers') {
-            return [
-                Forms\Components\Repeater::make('contest_answers')
-                    ->relationship()
-                    ->schema([
-                        Forms\Components\TextInput::make('content')
-                            ->required()
-                            ->label('Content')
-                            ->placeholder('Answer content')
-                            ->columnSpan([
-                                'md' => 5,
-                            ]),
-
-                        Forms\Components\TextInput::make('order')
-                            ->gt(0)
-                            ->label('Order')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(255)
-                            ->placeholder('Enter order')
-                            ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
-                            ->required()
-                            ->columnSpan([
-                                'md' => 1,
-                            ]),
-
-                        Forms\Components\Toggle::make('is_true')
-                            ->label('Is true')
-                            ->helperText('Correct answer')
-                            ->default(false)
-                            ->columnSpan([
-                                'md' => 2,
-                            ]),
-
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Is active')
-                            ->helperText('This answer will be hidden from the question.')
-                            ->default(true)
-                            ->columnSpan([
-                                'md' => 2,
-                            ]),
-                    ])
-                    ->deletable(false)
-                    ->disableLabel()
-                    ->defaultItems(1)
-                    ->columns([
-                        'md' => 10,
-                    ])
-                    ->required(),
-            ];
-        }
-
-        return [
-            Forms\Components\Select::make('quiz_contest_id')
-                ->label('Contest')
-                ->options(Contest::all()->pluck('name', 'id'))
-                ->searchable()
-                ->required(),
-
-            Forms\Components\Toggle::make('is_active')
-                ->label('Is active')
-                ->helperText('This question will be hidden from the contest')
-                ->inline(false)
-                ->default(true),
-
-            Forms\Components\Textarea::make('title_origin')
-                ->columnSpan('full')
-                ->placeholder('Enter question title here')
-                ->required(),
-
-            Forms\Components\FileUpload::make('image')
-                ->label('Image')
-                ->image()
-                ->columnSpan('full'),
-
-            Forms\Components\Textarea::make('title_extra')
-                ->placeholder('Add more questions if any')
-                ->columnSpan('full'),
-
-            Forms\Components\Textarea::make('explain')
-                ->placeholder('Explain the answer if any')
-                ->columnSpan('full'),
         ];
     }
 }

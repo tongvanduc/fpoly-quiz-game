@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ContestResource\Pages;
-use App\Filament\Resources\Quiz\ContestResource\Widgets\ContestStats;
+use App\Filament\Widgets\ContestStats;
 use App\Models\Quiz\Contest;
+use App\Models\Quiz\ContestQuestion;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,7 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class ContestResource extends Resource
 {
@@ -99,6 +100,7 @@ class ContestResource extends Resource
                                 Forms\Components\DateTimePicker::make('start_date')
                                     ->label('Start date')
                                     ->default(now())
+                                    ->afterOrEqual(now()->format('d-m-Y H'))
                                     ->seconds(false)
                                     ->required(),
 
@@ -163,6 +165,7 @@ class ContestResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
@@ -202,10 +205,32 @@ class ContestResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('question')
+                    ->label('Questions')
+                    ->icon('heroicon-m-eye')
+                    ->color('gray')
+                    ->modalSubmitAction(false)
+                    ->slideOver()
+                    ->modalWidth('7xl')
+                    ->modalContent(
+                        function (Contest $contest) {
+                            $questions = ContestQuestion::where('quiz_contest_id', $contest->id)
+                                ->orderBy('id', 'desc')
+                                ->get();
+
+                            return view('filament.shows.question',
+                                ['questions' => $questions, 'label' => $contest->name]);
+                        }
+                    ),
+
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ]);
     }
 
@@ -227,8 +252,6 @@ class ContestResource extends Resource
     {
         return [
             'index' => Pages\ListContests::route('/'),
-            'create' => Pages\CreateContest::route('/create'),
-            'edit' => Pages\EditContest::route('/{record}/edit'),
         ];
     }
 }
