@@ -24,6 +24,8 @@ class ContestResource extends Resource
 
     protected static ?string $navigationGroup = 'Quiz';
 
+    protected static ?string $label = 'Contests';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationLabel = 'Contests';
@@ -146,7 +148,7 @@ class ContestResource extends Resource
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('timer')
-                    ->label('Max working time')
+                    ->label('Timer')
                     ->sortable()
                     ->toggleable(),
 

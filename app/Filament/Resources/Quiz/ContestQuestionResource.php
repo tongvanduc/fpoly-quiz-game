@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
+use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestQuestion;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -23,6 +24,7 @@ class ContestQuestionResource extends Resource
     protected static ?string $navigationGroup = 'Quiz';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationLabel = 'Questions';
 
     protected static ?int $navigationSort = 1;
@@ -53,7 +55,8 @@ class ContestQuestionResource extends Resource
                     ->label('Title Origin')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->wrap(),
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
@@ -63,7 +66,8 @@ class ContestQuestionResource extends Resource
                     ->label('Title Extra')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->wrap(),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Is active')
@@ -160,7 +164,9 @@ class ContestQuestionResource extends Resource
 
         return [
             Forms\Components\Select::make('quiz_contest_id')
-                ->relationship('Contests', 'name')
+                ->label('Contest')
+                ->options(Contest::all()->pluck('name', 'id'))
+                ->searchable()
                 ->required(),
 
             Forms\Components\Toggle::make('is_active')
@@ -169,7 +175,7 @@ class ContestQuestionResource extends Resource
                 ->inline(false)
                 ->default(true),
 
-            Forms\Components\MarkdownEditor::make('title_origin')
+            Forms\Components\Textarea::make('title_origin')
                 ->columnSpan('full')
                 ->placeholder('Enter question title here')
                 ->required(),
@@ -179,11 +185,11 @@ class ContestQuestionResource extends Resource
                 ->image()
                 ->columnSpan('full'),
 
-            Forms\Components\MarkdownEditor::make('title_extra')
+            Forms\Components\Textarea::make('title_extra')
                 ->placeholder('Add more questions if any')
                 ->columnSpan('full'),
 
-            Forms\Components\MarkdownEditor::make('explain')
+            Forms\Components\Textarea::make('explain')
                 ->placeholder('Explain the answer if any')
                 ->columnSpan('full'),
         ];

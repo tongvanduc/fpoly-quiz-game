@@ -3,17 +3,13 @@
 namespace App\Filament\Resources\Account;
 
 use App\Filament\Resources\Account\UserResource\Pages;
-//use App\Filament\Resources\Account\UserResource\RelationManagers;
+use App\Models\Quiz\ContestResult;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Infolists\Components;
+use Illuminate\Support\Facades\DB;
+
 
 class UserResource extends Resource
 {
@@ -25,9 +21,15 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Account';
 
+    protected static ?string $label = 'Users';
+
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationLabel = 'Users';
+
     protected static ?int $navigationSort = 0;
+
+    protected static string $view = 'filament.resources.users.pages.view-user';
 
     public static function table(Table $table): Table
     {
@@ -45,70 +47,41 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('type_user')
-                    ->label('Type user')
-                    ->searchable()
+                Tables\Columns\BadgeColumn::make('email_verified_at')
+                    ->label('Email verification')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->getStateUsing(fn(User $user
+                    ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                    ->colors([
+                        'success' => 'Verified',
+                        'danger' => 'Unverified',
+                    ]),
 
-                Tables\Columns\IconColumn::make('email_verified_at')
-                    ->label('Is active')
-                    ->boolean()
+                Tables\Columns\BadgeColumn::make('type_user')
+                    ->label('Type user')
                     ->sortable()
+                    ->colors([
+                        'success'
+                    ])
                     ->toggleable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('Email verification')
+                    ->nullable()
+                    ->trueLabel('Verified')
+                    ->falseLabel('Unverified'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Components\Section::make()
-                    ->schema([
-                        Components\Grid::make(2)
-                            ->schema([
-                                Components\Group::make([
-                                    Components\TextEntry::make('title'),
-                                    Components\TextEntry::make('slug'),
-                                    Components\TextEntry::make('published_at')
-                                        ->badge()
-                                        ->date()
-                                        ->color('success'),
-                                ]),
-                                Components\Group::make([
-                                    Components\TextEntry::make('author.name'),
-                                    Components\TextEntry::make('category.name'),
-                                    Components\TextEntry::make('tags')
-                                        ->badge()
-                                        ->getStateUsing(fn () => ['one', 'two', 'three', 'four']),
-                                ]),
-                            ]),
-                        Components\ImageEntry::make('image')
-                            ->hiddenLabel()
-                            ->grow(false),
-
-                    ]),
-                    Components\Section::make('Content')
-                    ->schema([
-                        Components\TextEntry::make('content')
-                            ->prose()
-                            ->markdown()
-                            ->hiddenLabel(),
-                    ])
-                    ->collapsible(),
-            ]);
-    }
-
     public static function getRelations(): array
     {
         return [
-            //
+
         ];
     }
 
@@ -116,7 +89,7 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'view' => Pages\ViewUser::route('/{record}'),
+            'view' => Pages\ViewUserDetail::route('/{record}'),
             'contest_result' => Pages\ViewUserContestResult::route('/{record}/contest_result/{related}'),
         ];
     }
