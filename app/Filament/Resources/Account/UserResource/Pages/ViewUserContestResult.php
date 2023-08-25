@@ -8,6 +8,7 @@ use App\Models\Quiz\ContestQuestion;
 use App\Models\Quiz\ContestResult;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -67,12 +68,6 @@ class ViewUserContestResult extends Page implements HasForms
         return __('Result of') . " {$this->user->name}";
     }
 
-    public function getSubheading(): null|string
-    {
-        return __('Point') . ": {$this->contestResult->point}";
-    }
-
-
     public function form(Form $form): Form
     {
         return $form
@@ -113,6 +108,18 @@ class ViewUserContestResult extends Page implements HasForms
                             ->label('Code:')
                             ->translateLabel()
                             ->placeholder(fn() => $this->contest->code),
+
+                        TextInput::make('point')
+                            ->disabled()
+                            ->label('Point:')
+                            ->translateLabel()
+                            ->placeholder(fn() => $this->contestResult->point . "/10"),
+
+                        TextInput::make('total_time')
+                            ->disabled()
+                            ->label('Total time:')
+                            ->translateLabel()
+                            ->placeholder($this->formatTotalTime($this->contestResult->total_time)),
 
                         TextInput::make('start_date')
                             ->disabled()
@@ -164,7 +171,7 @@ class ViewUserContestResult extends Page implements HasForms
             ->translateLabel();
     }
 
-    private function getContestLabel()
+    private function getContestLabel(): HtmlString
     {
 
         $imgSrc = asset($this->contest->image);
@@ -173,6 +180,26 @@ class ViewUserContestResult extends Page implements HasForms
 
         return new HtmlString($html);
 
+    }
+
+    private function formatTotalTime($totalTime): string
+    {
+        try {
+
+            // Tạo một đối tượng CarbonInterval từ số giây
+            $interval = CarbonInterval::seconds($totalTime);
+
+            // Định dạng đầu ra theo ngôn ngữ hiện tại của ứng dụng
+            // In ra kết quả
+            return $interval->cascade()->locale(app()->getLocale())->forHumans();
+
+        } catch (\Exception $e) {
+
+            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
+
+            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        }
     }
 
     private function formatAnswers($answers): array
@@ -218,6 +245,7 @@ class ViewUserContestResult extends Page implements HasForms
             $numberOfCorrectAnswersByUser = collect($answers)->whereIn('id', $answeredIds)->where('is_true', true)->count();
 
             $corrected = __('Corrected');
+
             $incorrect = __('Incorrect');
 
             if ($numberOfCorrectAnswers === 1) {
