@@ -97,7 +97,7 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function createContestInfoSection(): Forms\Components\Section
     {
-        return Forms\Components\Section::make(__('Contest Info'))
+        return Forms\Components\Section::make($this->getContestLabel())
             ->schema([
                 Forms\Components\Grid::make('contestResult')
                     ->schema([
@@ -162,6 +162,17 @@ class ViewUserContestResult extends Page implements HasForms
             ])
             ->columnSpan(['lg' => 3])
             ->translateLabel();
+    }
+
+    private function getContestLabel()
+    {
+
+        $imgSrc = asset($this->contest->image);
+
+        $html = "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->contest->name}'>";
+
+        return new HtmlString($html);
+
     }
 
     private function formatAnswers($answers): array
@@ -249,7 +260,9 @@ class ViewUserContestResult extends Page implements HasForms
                 $checked .= $answer['is_true'] === 1 ? '-true' : '-false';
 
                 $output[$answer['id']] = $checked;
+
             }
+
             return $output;
         } catch (\Exception $e) {
 
@@ -265,17 +278,30 @@ class ViewUserContestResult extends Page implements HasForms
         try {
 
             $question = collect($this->contestQuestion)->where('id', $questionId)->first();
+
             $html = "<span>{$question['title_origin']}</span>";
+
             if (!empty($question['image'])) {
+
+                $imgSrc = asset($question['image']);
+
+                $alt = $question['title_extra'] ?? $question['title_origin'];
+
                 $html .= "
-                <div class='flex flex-col items-center my-2'>
-                    <img src='{$question['image']}' alt='Image' class='mx-auto my-2 block' style='width: 30%;'>
-            ";
+                    <div class='flex flex-col items-center my-2'>
+                        <img src='{$imgSrc}' alt='{$alt}' class='mx-auto rounded-lg my-2 block' style='width: 30%;'>
+                    ";
+
                 if (!empty($question['title_extra'])) {
+
                     $html .= "<span class='text-sm text-gray-500'>{$question['title_extra']}</span>";
+
                 }
+
                 $html .= "</div>";
+
             }
+
             return new HtmlString($html);
 
         } catch (\Exception $e) {
