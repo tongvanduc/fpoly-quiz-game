@@ -26,6 +26,8 @@ class ViewUserDetail extends Page implements HasTable
 
     private object $contests;
 
+    private string $contestResultRoute = 'filament.admin.resources.account.users.contest_result';
+
     public function mount($record): void
     {
         $this->user = User::query()->findOrFail($record);
@@ -78,10 +80,9 @@ class ViewUserDetail extends Page implements HasTable
             ])
             ->actions([
                 ViewAction::make()
-//                    Phần cmt của Vinh thầy đừng xóa nhé
-//                    ->url(function ($record) {
-//                    return route('filament.admin.resources.account.users.contest_result', ['record' => $this->user->id, 'related' => $record->id]);
-//                }),
+                    ->url(function ($record) {
+                        return route($this->contestResultRoute, ['record' => $this->user->id, 'related' => $record->id]);
+                    }),
             ]);
     }
 
