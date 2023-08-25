@@ -81,7 +81,7 @@ class ContestQuestionResource extends Resource
                             ->gt(0)
                             ->label('Order')
                             ->numeric()
-                            ->minValue(1)
+                            ->minValue(0)
                             ->maxValue(255)
                             ->placeholder('Enter order')
                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
@@ -155,14 +155,10 @@ class ContestQuestionResource extends Resource
                     ->native(true),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->modalWidth('5xl')
-                    ->slideOver(),
+                Tables\Actions\EditAction::make(),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make()
-                    ->modalWidth('5xl')
-                    ->slideOver(),
+                Tables\Actions\CreateAction::make(),
             ]);
     }
 
@@ -177,6 +173,8 @@ class ContestQuestionResource extends Resource
     {
         return [
             'index' => Pages\ListContestQuestions::route('/'),
+            'create' => Pages\CreateContestQuestion::route('/create'),
+            'edit' => Pages\EditContestQuestion::route('/{record}/edit'),
         ];
     }
 }

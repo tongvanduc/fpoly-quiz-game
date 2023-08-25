@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ContestResource\Pages;
-use App\Filament\Resources\Quiz\ContestResource\Widgets\ContestStats;
+use App\Filament\Widgets\ContestStats;
 use App\Models\Quiz\Contest;
 use App\Models\Quiz\ContestQuestion;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,7 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class ContestResource extends Resource
 {
@@ -32,6 +32,8 @@ class ContestResource extends Resource
     protected static ?string $navigationLabel = 'Contests';
 
     protected static ?int $navigationSort = 0;
+
+    public string | null $labelQuestion = 'abc';
 
     public static function form(Form $form): Form
     {
@@ -205,14 +207,23 @@ class ContestResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('show')
-                    ->action(fn (ContestQuestion $record) => $record->all())
+                Tables\Actions\Action::make('question')
                     ->label('Questions')
                     ->icon('heroicon-m-eye')
                     ->color('gray')
                     ->modalSubmitAction(false)
-                    ->modalDescription('Đây là danh sách câu hỏi')
-                    ->modalContent(view('filament.shows.question')),
+                    ->slideOver()
+                    ->modalWidth('7xl')
+                    ->modalContent(
+                        function (Contest $contest) {
+                            $questions = ContestQuestion::where('quiz_contest_id', $contest->id)
+                                ->orderBy('id', 'desc')
+                                ->get();
+
+                            return view('filament.shows.question',
+                                ['questions' => $questions, 'label' => $contest->name]);
+                        }
+                    ),
 
                 Tables\Actions\EditAction::make()
                     ->modalWidth('5xl')
