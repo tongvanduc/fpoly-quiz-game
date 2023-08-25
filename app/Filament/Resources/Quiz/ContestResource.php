@@ -33,8 +33,6 @@ class ContestResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
-    public string | null $labelQuestion = 'abc';
-
     public static function form(Form $form): Form
     {
         return $form
