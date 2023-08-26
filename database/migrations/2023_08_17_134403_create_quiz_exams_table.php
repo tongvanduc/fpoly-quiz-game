@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('quiz_contests', function (Blueprint $table) {
+        Schema::create('quiz_exams', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('Tên cuộc thi');
             $table->string('image')->nullable()->comment('Ảnh đại diện');
@@ -32,6 +32,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('quiz_contests');
+        Schema::dropIfExists('quiz_exams');
     }
 };

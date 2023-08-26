@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Quiz\Contest;
-use App\Models\Quiz\ContestResult;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamResult;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

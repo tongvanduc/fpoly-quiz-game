@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\API\Quiz;
 
 use App\Http\Controllers\Controller;
-use App\Models\Quiz\Contest;
-use App\Models\Quiz\ContestResult;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamResult;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-class ContestResultController extends Controller
+class ExamResultController extends Controller
 {
     /**
-     * @param Contest $contest
+     * @param Exam $exam
      * @return void
      */
     public function __construct(
-        public User          $user,
-        public Contest       $contest,
-        public ContestResult $contestResult,
+        public User       $user,
+        public Exam       $exam,
+        public ExamResult $examResult,
     )
     {
 
@@ -34,9 +34,9 @@ class ContestResultController extends Controller
                     'required',
                     "exists:users,id,id,{$request->user_id}"
                 ],
-                'quiz_contest_id' => [
+                'quiz_exam_id' => [
                     'required',
-                    "exists:quiz_contests,id,id,{$request->quiz_contest_id}"
+                    "exists:quiz_exams,id,id,{$request->quiz_exam_id}"
                 ],
                 'results' => 'required|array',
                 'results.*' => 'required|array',
@@ -48,21 +48,21 @@ class ContestResultController extends Controller
                 return response($validator->errors(), Response::HTTP_BAD_REQUEST);
             }
 
-            $contest = $this->contest->query()->find($request->quiz_contest_id);
-            $contestResultCount = $this->contestResult->query()
+            $exam = $this->exam->query()->find($request->quiz_exam_id);
+            $examResultCount = $this->examResult->query()
                 ->where([
                     'user_id' => $request->user_id,
-                    'quiz_contest_id' => $request->quiz_contest_id,
+                    'quiz_exam_id' => $request->quiz_exam_id,
                 ])
                 ->count();
 
-            if ($contest->max_of_tries < $contestResultCount) {
+            if ($exam->max_of_tries < $examResultCount) {
                 return response([
                     'max_of_tries' => [__('max_of_tries')]
                 ], Response::HTTP_BAD_REQUEST);
             }
 
-            $this->contestResult->query()->create($request->all());
+            $this->examResult->query()->create($request->all());
 
             return \response()->json([], Response::HTTP_OK);
         } catch (\Exception $exception) {

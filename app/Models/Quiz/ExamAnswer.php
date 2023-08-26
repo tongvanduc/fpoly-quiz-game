@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ContestAnswer extends Model
+class ExamAnswer extends Model
 {
     use HasFactory;
 
-    protected $table = 'quiz_contest_answers';
+    protected $table = 'quiz_exam_answers';
 
-    public function contest_questions()
+    public function exam_questions()
     {
-        return $this->belongsTo(ContestAnswer::class, 'quiz_contest_question_id');
+        return $this->belongsTo(ExamAnswer::class, 'quiz_exam_question_id');
     }
 
-    public function contest_questions_only_active()
+    public function exam_questions_only_active()
     {
-        return $this->belongsTo(ContestAnswer::class, 'quiz_contest_question_id')->active();
+        return $this->belongsTo(ExamAnswer::class, 'quiz_exam_question_id')->active();
     }
 
     /**

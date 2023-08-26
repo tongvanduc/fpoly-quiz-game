@@ -2,7 +2,7 @@
 
 namespace Database\Factories\Quiz;
 
-use App\Models\Quiz\ContestQuestion;
+use App\Models\Quiz\Exam;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -12,9 +12,9 @@ use Throwable;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class ContestQuestionFactory extends Factory
+class ExamFactory extends Factory
 {
-    protected $model = ContestQuestion::class;
+    protected $model = Exam::class;
 
     /**
      * Define the model's default state.
@@ -24,10 +24,13 @@ class ContestQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'title_origin' => fake()->text(100),
-            'image' => rand(0, 1) ? $this->createImage() : null,
-            'title_extra' => rand(0, 1) ? fake()->text(100) : null,
-            'explain' => rand(0, 1) ? fake()->text() : null,
+            'name' => fake()->text(20),
+            'image' => $this->createImage(),
+            'code' => strtoupper(Str::random(8)),
+            'start_date' => date('Y-m-d H:i'),
+            'end_date' => date('Y-m-d H:i', strtotime('+30 days')),
+            'timer' => 30,
+            'max_of_tries' => 3,
             'is_active' => true,
         ];
     }

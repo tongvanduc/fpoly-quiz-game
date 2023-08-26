@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Quiz\Contest;
-use App\Models\Quiz\ContestAnswer;
-use App\Models\Quiz\ContestQuestion;
-use App\Models\Quiz\ContestResult;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamAnswer;
+use App\Models\Quiz\ExamQuestion;
+use App\Models\Quiz\ExamResult;
 use App\Models\User;
 use Closure;
 use Filament\Notifications\Actions\Action;
@@ -40,49 +40,49 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->command->info('Student User created.');
 
-        // Contest
-        $this->command->warn(PHP_EOL . 'Creating Contest ...');
-        Contest::factory(10)->create();
-        $this->command->info('Contest user created.');
+        // Exam
+        $this->command->warn(PHP_EOL . 'Creating Exam ...');
+        Exam::factory(10)->create();
+        $this->command->info('Exam user created.');
 
-        $this->command->warn(PHP_EOL . 'Creating Contest Question ...');
-        foreach (Contest::all() as $contest) {
-            ContestQuestion::factory(10)->create([
-                'quiz_contest_id' => $contest->id
+        $this->command->warn(PHP_EOL . 'Creating Exam Question ...');
+        foreach (Exam::all() as $exam) {
+            ExamQuestion::factory(10)->create([
+                'quiz_exam_id' => $exam->id
             ]);
         }
-        $this->command->info('Contest Question created.');
+        $this->command->info('Exam Question created.');
 
-        $this->command->warn(PHP_EOL . 'Creating Contest Answer ...');
-        foreach (ContestQuestion::all() as $contestQuestion) {
-            ContestAnswer::factory(4)->create([
-                'quiz_contest_question_id' => $contestQuestion->id
+        $this->command->warn(PHP_EOL . 'Creating Exam Answer ...');
+        foreach (ExamQuestion::all() as $examQuestion) {
+            ExamAnswer::factory(4)->create([
+                'quiz_exam_question_id' => $examQuestion->id
             ]);
         }
-        $this->command->info('Contest Answer created.');
+        $this->command->info('Exam Answer created.');
 
-        $this->command->warn(PHP_EOL . 'Creating Contest Result ...');
+        $this->command->warn(PHP_EOL . 'Creating Exam Result ...');
         foreach (User::all() as $user) {
-            foreach (Contest::all() as $contest) {
+            foreach (Exam::all() as $exam) {
                 $data = [
                     'user_id' => $user->id,
-                    'quiz_contest_id' => $contest->id,
+                    'quiz_exam_id' => $exam->id,
                     'point' => 10,
                     'total_time' => 300,
                 ];
 
-                foreach (ContestQuestion::with('contest_answers')->where('quiz_contest_id', $contest->id)->get() as $contestQuestion) {
-                    $data['results'][$contestQuestion->id] = [
-                        $contestQuestion->contest_answers->first()->id,
-                        $contestQuestion->contest_answers->last()->id,
+                foreach (ExamQuestion::with('exam_answers')->where('quiz_exam_id', $exam->id)->get() as $examQuestion) {
+                    $data['results'][$examQuestion->id] = [
+                        $examQuestion->exam_answers->first()->id,
+                        $examQuestion->exam_answers->last()->id,
                     ];
                 }
 
-                ContestResult::query()->create($data);
+                ExamResult::query()->create($data);
             }
         }
 
-        $this->command->info('Contest Result created.');
+        $this->command->info('Exam Result created.');
 
 //        // Blog
 //        $this->command->warn(PHP_EOL . 'Creating blog categories...');

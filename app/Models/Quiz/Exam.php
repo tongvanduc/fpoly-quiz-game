@@ -7,25 +7,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class Contest extends Model
+class Exam extends Model
 {
     use HasFactory;
 
-    protected $table = 'quiz_contests';
+    protected $table = 'quiz_exams';
 
-    public function contest_results()
+    public function exam_results()
     {
-        return $this->hasMany(ContestResult::class, 'quiz_contest_id');
+        return $this->hasMany(ExamResult::class, 'quiz_exam_id');
     }
 
-    public function contest_questions()
+    public function exam_questions()
     {
-        return $this->hasMany(ContestQuestion::class, 'quiz_contest_id');
+        return $this->hasMany(ExamQuestion::class, 'quiz_exam_id');
     }
 
-    public function contest_questions_only_active()
+    public function exam_questions_only_active()
     {
-        return $this->hasMany(ContestQuestion::class, 'quiz_contest_id')->active();
+        return $this->hasMany(ExamQuestion::class, 'quiz_exam_id')->active();
     }
 
     /**

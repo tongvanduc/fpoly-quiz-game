@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Quiz;
 
-use App\Filament\Resources\Quiz\ContestResource\Pages;
-use App\Filament\Resources\Quiz\ContestResource\Widgets\ContestStats;
-use App\Models\Quiz\Contest;
+use App\Filament\Resources\Quiz\ExamResource\Pages;
+use App\Filament\Widgets\ExamStats;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamQuestion;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,23 +14,22 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
-class ContestResource extends Resource
+class ExamResource extends Resource
 {
-    protected static ?string $model = Contest::class;
+    protected static ?string $model = Exam::class;
 
-    protected static ?string $slug = 'quiz/contests';
+    protected static ?string $slug = 'quiz/exams';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationGroup = 'Quiz';
 
-    protected static ?string $label = 'Contests';
+    protected static ?string $label = 'Exams';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Contests';
+    protected static ?string $navigationLabel = 'Exams';
 
     protected static ?int $navigationSort = 0;
 
@@ -43,7 +44,7 @@ class ContestResource extends Resource
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->autofocus()
-                                    ->placeholder('Name of the contest')
+                                    ->placeholder('Name of the exam')
                                     ->live(onBlur: true),
 
                                 Forms\Components\TextInput::make('code')
@@ -52,7 +53,7 @@ class ContestResource extends Resource
                                     })
                                     ->disabled()
                                     ->dehydrated()
-                                    ->unique(Contest::class, 'code', ignoreRecord: true),
+                                    ->unique(Exam::class, 'code', ignoreRecord: true),
                             ])
                             ->columns(2),
 
@@ -93,12 +94,13 @@ class ContestResource extends Resource
                             ->schema([
                                 Forms\Components\Toggle::make('is_active')
                                     ->label('Is active')
-                                    ->helperText('This contest will be hidden from all list contests.')
+                                    ->helperText('This exam will be hidden from all list exams.')
                                     ->default(true),
 
                                 Forms\Components\DateTimePicker::make('start_date')
                                     ->label('Start date')
                                     ->default(now())
+                                    ->afterOrEqual(now()->format('d-m-Y H'))
                                     ->seconds(false)
                                     ->required(),
 
@@ -163,6 +165,7 @@ class ContestResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Is active')
@@ -202,10 +205,32 @@ class ContestResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('question')
+                    ->label('Questions')
+                    ->icon('heroicon-m-eye')
+                    ->color('gray')
+                    ->modalSubmitAction(false)
+                    ->slideOver()
+                    ->modalWidth('7xl')
+                    ->modalContent(
+                        function (Exam $exam) {
+                            $questions = ExamQuestion::where('quiz_exam_id', $exam->id)
+                                ->orderBy('id', 'desc')
+                                ->get();
+
+                            return view('filament.shows.question',
+                                ['questions' => $questions, 'label' => $exam->name]);
+                        }
+                    ),
+
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver(),
             ]);
     }
 
@@ -219,16 +244,14 @@ class ContestResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            ContestStats::class,
+            ExamStats::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContests::route('/'),
-            'create' => Pages\CreateContest::route('/create'),
-            'edit' => Pages\EditContest::route('/{record}/edit'),
+            'index' => Pages\ListExams::route('/'),
         ];
     }
 }
