@@ -200,109 +200,82 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function getQuestionStatistics($questionsId): string|array
     {
-        try {
+        $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
 
-            $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
+        $answeredIds = $this->getAnsweredIds($questionsId);
 
-            $answeredIds = $this->getAnsweredIds($questionsId);
+        $numberOfCorrectAnswers = collect($answers)->where('is_true', true)->count();
 
-            $numberOfCorrectAnswers = collect($answers)->where('is_true', true)->count();
+        $numberOfCorrectAnswersByUser = collect($answers)->whereIn('id', $answeredIds)->where('is_true', true)->count();
 
-            $numberOfCorrectAnswersByUser = collect($answers)->whereIn('id', $answeredIds)->where('is_true', true)->count();
+        $corrected = __('Corrected');
 
-            $corrected = __('Corrected');
+        $incorrect = __('Incorrect');
 
-            $incorrect = __('Incorrect');
+        if ($numberOfCorrectAnswers === 1) {
 
-            if ($numberOfCorrectAnswers === 1) {
+            $text = ($numberOfCorrectAnswersByUser === $numberOfCorrectAnswers) ? $corrected : $incorrect;
 
-                $text = ($numberOfCorrectAnswersByUser === $numberOfCorrectAnswers) ? $corrected : $incorrect;
+        } else {
 
-            } else {
-
-                $text = "$corrected: {$numberOfCorrectAnswersByUser}/{$numberOfCorrectAnswers}";
-
-            }
-
-            return "[{$text}]";
-
-        } catch (\Exception $e) {
-            data_when_error($e);
-            
-            return "[]";
+            $text = "$corrected: {$numberOfCorrectAnswersByUser}/{$numberOfCorrectAnswers}";
 
         }
+
+        return "[{$text}]";
     }
 
     private function getTypeOfAnswers($questionsId): string|array
     {
-        try {
+        $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
 
-            $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
+        $answeredIds = $this->getAnsweredIds($questionsId);
 
-            $answeredIds = $this->getAnsweredIds($questionsId);
+        $output = [];
 
-            $output = [];
+        foreach ($answers as $answer) {
 
-            foreach ($answers as $answer) {
+            // checked or unchecked
+            $checked = in_array($answer['id'], $answeredIds, true) ? 'checked' : 'unchecked';
 
-                // checked or unchecked
-                $checked = in_array($answer['id'], $answeredIds, true) ? 'checked' : 'unchecked';
+            // true or false
+            $checked .= $answer['is_true'] === 1 ? '-true' : '-false';
 
-                // true or false
-                $checked .= $answer['is_true'] === 1 ? '-true' : '-false';
-
-                $output[$answer['id']] = $checked;
-
-            }
-
-            return $output;
-
-        } catch (\Exception $e) {
-            data_when_error($e);
-            
-            return [];
+            $output[$answer['id']] = $checked;
 
         }
+
+        return $output;
     }
 
     private function getQuestionTitle($questionId): HtmlString|array
     {
-        try {
+        $question = collect($this->contestQuestion)->where('id', $questionId)->first();
 
-            $question = collect($this->contestQuestion)->where('id', $questionId)->first();
+        $html = "<span>{$question['title_origin']}</span>";
 
-            $html = "<span>{$question['title_origin']}</span>";
+        if (!empty($question['image'])) {
 
-            if (!empty($question['image'])) {
+            $imgSrc = asset($question['image']);
 
-                $imgSrc = asset($question['image']);
+            $alt = $question['title_extra'] ?? $question['title_origin'];
 
-                $alt = $question['title_extra'] ?? $question['title_origin'];
-
-                $html .= "
+            $html .= "
                     <div class='flex flex-col items-center my-2'>
                         <img src='{$imgSrc}' alt='{$alt}' class='mx-auto rounded-lg my-2 block' style='width: 30%;'>
                     ";
 
-                if (!empty($question['title_extra'])) {
+            if (!empty($question['title_extra'])) {
 
-                    $html .= "<span class='text-sm text-gray-500'>{$question['title_extra']}</span>";
-
-                }
-
-                $html .= "</div>";
+                $html .= "<span class='text-sm text-gray-500'>{$question['title_extra']}</span>";
 
             }
 
-            return new HtmlString($html);
-
-        } catch (\Exception $e) {
-            data_when_error($e);
-            
-            return new HtmlString("<div></div>");
+            $html .= "</div>";
 
         }
+
+        return new HtmlString($html);
     }
 
 }
