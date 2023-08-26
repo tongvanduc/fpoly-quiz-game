@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -95,41 +96,31 @@ class ViewUserExamResult extends Page implements HasForms
                 Forms\Components\Grid::make('examResult')
                     ->schema([
 
-                        TextInput::make('name')
-                            ->disabled()
-                            ->label('Name:')
-                            ->translateLabel()
-                            ->placeholder(fn() => $this->exam->name),
+                        Placeholder::make('name')
+                            ->hiddenLabel()
+                            ->content($this->renderContestInfo('Name', $this->exam->name)),
 
-                        TextInput::make('code')
-                            ->disabled()
-                            ->label('Code:')
-                            ->translateLabel()
-                            ->placeholder(fn() => $this->exam->code),
+                        Placeholder::make('code')
+                            ->hiddenLabel()
+                            ->content($this->renderContestInfo('Code', $this->exam->code)),
 
-                        TextInput::make('point')
-                            ->disabled()
-                            ->label('Point:')
-                            ->translateLabel()
-                            ->placeholder(fn() => $this->examResult->point . "/10"),
+                        Placeholder::make('point')
+                            ->hiddenLabel()
+                            ->content($this->renderContestInfo('Point', $this->examResult->point . "/10")),
 
-                        TextInput::make('total_time')
-                            ->disabled()
-                            ->label('Total time:')
-                            ->translateLabel()
-                            ->placeholder($this->formatTotalTime($this->examResult->total_time)),
+                        Placeholder::make('total_time')
+                            ->hiddenLabel()
+                            ->content($this->renderContestInfo('Total time', $this->formatTotalTime($this->examResult->total_time))),
 
-                        TextInput::make('start_date')
-                            ->disabled()
+                        Placeholder::make('start_date')
+                            ->hiddenLabel()
                             ->label('Start date:')
-                            ->translateLabel()
-                            ->placeholder(fn() => Carbon::make($this->exam->start_date)->format('d-m-Y')),
+                            ->content($this->renderContestInfo('Start date', Carbon::make($this->exam->start_date)->format('H:i d-m-Y'))),
 
-                        TextInput::make('start_date')
-                            ->disabled()
+                        Placeholder::make('start_date')
+                            ->hiddenLabel()
                             ->label('End date:')
-                            ->translateLabel()
-                            ->placeholder(fn() => Carbon::make($this->exam->end_date)->format('d-m-Y')),
+                            ->content($this->renderContestInfo('End date', Carbon::make($this->exam->end_date)->format('H:i d-m-Y'))),
 
                     ])
                     ->columns(1),
@@ -174,10 +165,16 @@ class ViewUserExamResult extends Page implements HasForms
 
         $imgSrc = asset($this->exam->image);
 
-        $html = "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->exam->name}'>";
+        $html = file_exists($imgSrc) ? "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->exam->name}'>" : __('Contest Info');
 
         return new HtmlString($html);
 
+    }
+
+    private function renderContestInfo($key, $value)
+    {
+        $value = "<span class='font-bold'>{$value}</span>";
+        return new HtmlString(implode(': ', [trans($key), $value]));
     }
 
     private function formatTotalTime($totalTime): string|array
@@ -258,21 +255,23 @@ class ViewUserExamResult extends Page implements HasForms
 
             $imgSrc = asset($question['image']);
 
-            $alt = $question['title_extra'] ?? $question['title_origin'];
+            if (file_exists($imgSrc)) {
 
-            $html .= "
+                $alt = $question['title_extra'] ?? $question['title_origin'];
+
+                $html .= "
                     <div class='flex flex-col items-center my-2'>
                         <img src='{$imgSrc}' alt='{$alt}' class='mx-auto rounded-lg my-2 block' style='width: 30%;'>
                     ";
 
-            if (!empty($question['title_extra'])) {
+                if (!empty($question['title_extra'])) {
 
-                $html .= "<span class='text-sm text-gray-500'>{$question['title_extra']}</span>";
+                    $html .= "<span class='text-sm text-gray-500'>{$question['title_extra']}</span>";
 
+                }
+
+                $html .= "</div>";
             }
-
-            $html .= "</div>";
-
         }
 
         return new HtmlString($html);
