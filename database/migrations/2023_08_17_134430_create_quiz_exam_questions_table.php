@@ -10,9 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('quiz_contest_questions', function (Blueprint $table) {
+        Schema::create('quiz_exam_questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('quiz_contest_id')->index();
+            $table->unsignedBigInteger('quiz_exam_id')->index();
             $table->string('title_origin')->comment('Tiêu đề câu hỏi');
             $table->string('image')->nullable()->comment('Hình ảnh câu hỏi');
             $table->text('title_extra')->nullable()->comment('Tiêu đề bổ sung, thằng này ở bên dưới ảnh');
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('quiz_contest_questions');
+        Schema::dropIfExists('quiz_exam_questions');
     }
 };

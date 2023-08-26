@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\API\Quiz;
 
 use App\Http\Controllers\Controller;
-use App\Models\Quiz\Contest;
-use App\Models\Quiz\ContestResult;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamResult;
 use App\Models\User;
 use Illuminate\Http\Response;
 
-class ContestController extends Controller
+class ExamController extends Controller
 {
     /**
-     * @param Contest $contest
+     * @param Exam $exam
      * @return void
      */
     public function __construct(
-        public User          $user,
-        public Contest       $contest,
-        public ContestResult $contestResult,
+        public User       $user,
+        public Exam       $exam,
+        public ExamResult $examResult,
     )
     {
 
@@ -26,16 +26,16 @@ class ContestController extends Controller
     public function getInfoByCode($code)
     {
         try {
-            $contest = $this->contest->query()
+            $exam = $this->exam->query()
                 ->active()
                 ->with([
-                    'contest_questions_only_active',
-                    'contest_questions_only_active.contest_answers_only_active'
+                    'exam_questions_only_active',
+                    'exam_questions_only_active.exam_answers_only_active'
                 ])
                 ->where('code', $code)->firstOrFail();
 
             return \response()->json([
-                'contest' => $contest,
+                'exam' => $exam,
             ], Response::HTTP_OK);
         } catch (\Exception $exception) {
             return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -45,23 +45,23 @@ class ContestController extends Controller
     public function getResultByCode($code, $userID = null)
     {
         try {
-            $contest = $this->contest->query()
+            $exam = $this->exam->query()
                 ->active()
                 ->with([
-                    'contest_results' => function ($query) use ($userID) {
+                    'exam_results' => function ($query) use ($userID) {
                         $query->when($userID, function ($query2) use ($userID) {
                             $query2->where('user_id', $userID);
                         });
                     },
-                    'contest_results.user',
-                    'contest_questions_only_active',
-                    'contest_questions_only_active.contest_answers_only_active'
+                    'exam_results.user',
+                    'exam_questions_only_active',
+                    'exam_questions_only_active.exam_answers_only_active'
                 ])
                 ->where('code', $code)
                 ->firstOrFail();
 
             return \response()->json([
-                'contest' => $contest
+                'exam' => $exam
             ], Response::HTTP_OK);
         } catch (\Exception $exception) {
             return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -73,26 +73,26 @@ class ContestController extends Controller
         try {
             $user = $this->user->query()->findOrFail($userID);
 
-            $contestIDs = $this->contestResult->query()
-                ->select('quiz_contest_id')
+            $examIDs = $this->examResult->query()
+                ->select('quiz_exam_id')
                 ->distinct()
                 ->where('user_id', $user->id)
-                ->pluck('quiz_contest_id')->toArray();
+                ->pluck('quiz_exam_id')->toArray();
 
-            $contests = $this->contest->query()
+            $exams = $this->exam->query()
                 ->with([
-                    'contest_results' => function ($query) use ($userID) {
+                    'exam_results' => function ($query) use ($userID) {
                         $query->when($userID, function ($query2) use ($userID) {
                             $query2->where('user_id', $userID);
                         });
                     },
                 ])
                 ->active()
-                ->whereIn('id', $contestIDs)
+                ->whereIn('id', $examIDs)
                 ->get();
 
             return \response()->json([
-                'contests' => $contests
+                'exams' => $exams
             ], Response::HTTP_OK);
         } catch (\Exception $exception) {
             return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);

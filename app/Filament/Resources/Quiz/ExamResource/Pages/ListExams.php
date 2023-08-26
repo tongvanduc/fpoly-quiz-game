@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\Quiz\ContestResource\Pages;
+namespace App\Filament\Resources\Quiz\ExamResource\Pages;
 
-use App\Filament\Resources\Quiz\ContestResource;
+use App\Filament\Resources\Quiz\ExamResource;
 use Filament\Pages\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 
-class ListContests extends ListRecords
+class ListExams extends ListRecords
 {
     use ExposesTableToWidgets;
 
-    protected static string $resource = ContestResource::class;
+    protected static string $resource = ExamResource::class;
 
     protected function getActions(): array
     {
@@ -25,6 +25,6 @@ class ListContests extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        return ContestResource::getWidgets();
+        return ExamResource::getWidgets();
     }
 }

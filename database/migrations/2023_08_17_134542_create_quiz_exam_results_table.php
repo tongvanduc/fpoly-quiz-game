@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quiz_contest_results', function (Blueprint $table) {
+        Schema::create('quiz_exam_results', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('quiz_contest_id')->index();
+            $table->unsignedBigInteger('quiz_exam_id')->index();
 
             /*
              $results = [
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quiz_contest_results');
+        Schema::dropIfExists('quiz_exam_results');
     }
 };

@@ -87,7 +87,7 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'view' => Pages\ViewUserDetail::route('/{record}'),
-            'contest_result' => Pages\ViewUserContestResult::route('/{record}/contest_result/{related}'),
+            'exam_result' => Pages\ViewUserExamResult::route('/{record}/exam_result/{related}'),
         ];
     }
 }

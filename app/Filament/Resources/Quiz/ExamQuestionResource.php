@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Quiz;
 
-use App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
-use App\Models\Quiz\Contest;
-use App\Models\Quiz\ContestQuestion;
+use App\Filament\Resources\Quiz\ExamQuestionResource\Pages;
+use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamQuestion;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Wizard\Step;
@@ -13,11 +13,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ContestQuestionResource extends Resource
+class ExamQuestionResource extends Resource
 {
-    protected static ?string $model = ContestQuestion::class;
+    protected static ?string $model = ExamQuestion::class;
 
-    protected static ?string $slug = 'quiz/contest/questions';
+    protected static ?string $slug = 'quiz/exam/questions';
 
     protected static ?string $label = 'Questions';
 
@@ -35,15 +35,15 @@ class ContestQuestionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('quiz_contest_id')
-                    ->label('Contest')
-                    ->options(Contest::all()->pluck('name', 'id'))
+                Forms\Components\Select::make('quiz_exam_id')
+                    ->label('Exam')
+                    ->options(Exam::all()->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
 
                 Forms\Components\Toggle::make('is_active')
                     ->label('Is active')
-                    ->helperText('This question will be hidden from the contest')
+                    ->helperText('This question will be hidden from the exam')
                     ->inline(false)
                     ->default(true),
 
@@ -65,7 +65,7 @@ class ContestQuestionResource extends Resource
                     ->placeholder('Explain the answer if any')
                     ->columnSpan('full'),
 
-                Forms\Components\Repeater::make('contest_answers')
+                Forms\Components\Repeater::make('exam_answers')
                     ->label('Answers')
                     ->relationship()
                     ->schema([
@@ -172,9 +172,9 @@ class ContestQuestionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContestQuestions::route('/'),
-            'create' => Pages\CreateContestQuestion::route('/create'),
-            'edit' => Pages\EditContestQuestion::route('/{record}/edit'),
+            'index' => Pages\ListExamQuestions::route('/'),
+            'create' => Pages\CreateExamQuestion::route('/create'),
+            'edit' => Pages\EditExamQuestion::route('/{record}/edit'),
         ];
     }
 }

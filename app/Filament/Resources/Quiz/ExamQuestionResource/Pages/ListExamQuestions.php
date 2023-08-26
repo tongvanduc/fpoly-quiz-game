@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Quiz\ContestQuestionResource\Pages;
+namespace App\Filament\Resources\Quiz\ExamQuestionResource\Pages;
 
-use App\Filament\Resources\Quiz\ContestQuestionResource;
+use App\Filament\Resources\Quiz\ExamQuestionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListContestQuestions extends ListRecords
+class ListExamQuestions extends ListRecords
 {
-    protected static string $resource = ContestQuestionResource::class;
+    protected static string $resource = ExamQuestionResource::class;
 
     protected function getHeaderActions(): array
     {

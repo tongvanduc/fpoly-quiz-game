@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Account\UserResource\Pages;
 
 use App\Filament\Custom\Forms\Components\CheckboxList;
 use App\Filament\Resources\Account\UserResource;
-use App\Models\Quiz\ContestQuestion;
-use App\Models\Quiz\ContestResult;
+use App\Models\Quiz\ExamQuestion;
+use App\Models\Quiz\ExamResult;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -17,23 +17,23 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\HtmlString;
 
-class ViewUserContestResult extends Page implements HasForms
+class ViewUserExamResult extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static string $resource = UserResource::class;
 
-    protected static string $view = 'filament.resources.account.user-resource.pages.view-user-contest-result';
+    protected static string $view = 'filament.resources.account.user-resource.pages.view-user-exam-result';
 
-    protected ?ContestResult $contestResult;
+    protected ?ExamResult $examResult;
 
-    public $contestQuestion;
+    public $examQuestion;
 
     protected ?User $user;
 
     protected int $counter;
 
-    public $contest;
+    public $exam;
 
     public function __construct()
     {
@@ -44,19 +44,19 @@ class ViewUserContestResult extends Page implements HasForms
     {
         $this->user = User::query()->findOrFail($record);
 
-        $this->contestResult = ContestResult::query()
+        $this->examResult = ExamResult::query()
             ->where('user_id', $this->user->id)
             ->findOrFail($related);
 
-        $this->contest = $this->contestResult->contest;
+        $this->exam = $this->examResult->exam;
 
-        $this->contestQuestion = ContestQuestion::with('contest_answers_only_active')
-            ->where('quiz_contest_id', $this->contestResult->quiz_contest_id)
+        $this->examQuestion = ExamQuestion::with('exam_answers_only_active')
+            ->where('quiz_exam_id', $this->examResult->quiz_exam_id)
             ->get();
 
         $this->form
             ->fill([
-                'contestQuestion' => $this->contestQuestion,
+                'examQuestion' => $this->examQuestion,
             ]);
 
     }
@@ -79,57 +79,57 @@ class ViewUserContestResult extends Page implements HasForms
     protected function getFormSchema(): array
     {
         return [
-            // contest info
-            $this->createContestInfoSection(),
+            // exam info
+            $this->createExamInfoSection(),
 
             // results
-            $this->createContestResultSection(),
+            $this->createExamResultSection(),
 
         ];
     }
 
-    private function createContestInfoSection(): Forms\Components\Section
+    private function createExamInfoSection(): Forms\Components\Section
     {
-        return Forms\Components\Section::make($this->getContestLabel())
+        return Forms\Components\Section::make($this->getExamLabel())
             ->schema([
-                Forms\Components\Grid::make('contestResult')
+                Forms\Components\Grid::make('examResult')
                     ->schema([
 
                         TextInput::make('name')
                             ->disabled()
                             ->label('Name:')
                             ->translateLabel()
-                            ->placeholder(fn() => $this->contest->name),
+                            ->placeholder(fn() => $this->exam->name),
 
                         TextInput::make('code')
                             ->disabled()
                             ->label('Code:')
                             ->translateLabel()
-                            ->placeholder(fn() => $this->contest->code),
+                            ->placeholder(fn() => $this->exam->code),
 
                         TextInput::make('point')
                             ->disabled()
                             ->label('Point:')
                             ->translateLabel()
-                            ->placeholder(fn() => $this->contestResult->point . "/10"),
+                            ->placeholder(fn() => $this->examResult->point . "/10"),
 
                         TextInput::make('total_time')
                             ->disabled()
                             ->label('Total time:')
                             ->translateLabel()
-                            ->placeholder($this->formatTotalTime($this->contestResult->total_time)),
+                            ->placeholder($this->formatTotalTime($this->examResult->total_time)),
 
                         TextInput::make('start_date')
                             ->disabled()
                             ->label('Start date:')
                             ->translateLabel()
-                            ->placeholder(fn() => Carbon::make($this->contest->start_date)->format('d-m-Y')),
+                            ->placeholder(fn() => Carbon::make($this->exam->start_date)->format('d-m-Y')),
 
                         TextInput::make('start_date')
                             ->disabled()
                             ->label('End date:')
                             ->translateLabel()
-                            ->placeholder(fn() => Carbon::make($this->contest->end_date)->format('d-m-Y')),
+                            ->placeholder(fn() => Carbon::make($this->exam->end_date)->format('d-m-Y')),
 
                     ])
                     ->columns(1),
@@ -138,17 +138,17 @@ class ViewUserContestResult extends Page implements HasForms
             ->columnSpan(['lg' => 1]);
     }
 
-    private function createContestResultSection(): Forms\Components\Section
+    private function createExamResultSection(): Forms\Components\Section
     {
-        return Forms\Components\Section::make('Contest Result Detail')
+        return Forms\Components\Section::make('Exam Result Detail')
             ->schema([
-                Forms\Components\Repeater::make('contestQuestion')
+                Forms\Components\Repeater::make('examQuestion')
                     ->schema([
                         Forms\Components\Section::make(fn($get) => $this->getQuestionTitle($get('id')))
                             ->schema([
 
-                                CheckboxList::make('contest_answers_only_active')
-                                    ->options(fn($get) => $this->formatAnswers($get('contest_answers_only_active')))
+                                CheckboxList::make('exam_answers_only_active')
+                                    ->options(fn($get) => $this->formatAnswers($get('exam_answers_only_active')))
                                     ->type(fn($get) => $this->getTypeOfAnswers($get('id')))
                                     ->disabled()
                                     ->hiddenLabel()
@@ -169,12 +169,12 @@ class ViewUserContestResult extends Page implements HasForms
             ->translateLabel();
     }
 
-    private function getContestLabel(): HtmlString
+    private function getExamLabel(): HtmlString
     {
 
-        $imgSrc = asset($this->contest->image);
+        $imgSrc = asset($this->exam->image);
 
-        $html = "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->contest->name}'>";
+        $html = "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->exam->name}'>";
 
         return new HtmlString($html);
 
@@ -195,12 +195,12 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function getAnsweredIds($questionsId)
     {
-        return $this->contestResult->results[$questionsId];
+        return $this->examResult->results[$questionsId];
     }
 
     private function getQuestionStatistics($questionsId): string|array
     {
-        $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
+        $answers = collect($this->examQuestion)->where('id', $questionsId)->first()['exam_answers_only_active'];
 
         $answeredIds = $this->getAnsweredIds($questionsId);
 
@@ -227,7 +227,7 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function getTypeOfAnswers($questionsId): string|array
     {
-        $answers = collect($this->contestQuestion)->where('id', $questionsId)->first()['contest_answers_only_active'];
+        $answers = collect($this->examQuestion)->where('id', $questionsId)->first()['exam_answers_only_active'];
 
         $answeredIds = $this->getAnsweredIds($questionsId);
 
@@ -250,7 +250,7 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function getQuestionTitle($questionId): HtmlString|array
     {
-        $question = collect($this->contestQuestion)->where('id', $questionId)->first();
+        $question = collect($this->examQuestion)->where('id', $questionId)->first();
 
         $html = "<span>{$question['title_origin']}</span>";
 

@@ -142,7 +142,7 @@
                                 style="--c-300:var(--primary-300);--c-400:var(--primary-400);--c-500:var(--primary-500);
                                 --c-600:var(--primary-600);"
                             />
-                            <a href="contest/questions/{{ $question->id }}/edit"
+                            <a href="exam/questions/{{ $question->id }}/edit"
                                class="custom-edit"
                                style="font-size: 13px; color: #fbbf24; text-underline: #fbbf24;"
                             >
