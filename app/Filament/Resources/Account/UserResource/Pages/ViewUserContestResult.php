@@ -15,8 +15,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
 class ViewUserContestResult extends Page implements HasForms
@@ -182,11 +180,10 @@ class ViewUserContestResult extends Page implements HasForms
 
     }
 
-    private function formatTotalTime($totalTime): string
+    private function formatTotalTime($totalTime): string|array
     {
         try {
 
-            // Tạo một đối tượng CarbonInterval từ số giây
             $interval = CarbonInterval::seconds($totalTime);
 
             // Định dạng đầu ra theo ngôn ngữ hiện tại của ứng dụng
@@ -195,9 +192,7 @@ class ViewUserContestResult extends Page implements HasForms
 
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }
@@ -210,9 +205,7 @@ class ViewUserContestResult extends Page implements HasForms
 
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }
@@ -225,14 +218,12 @@ class ViewUserContestResult extends Page implements HasForms
 
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }
 
-    private function getQuestionStatistics($questionsId): string
+    private function getQuestionStatistics($questionsId): string|array
     {
         try {
 
@@ -262,14 +253,12 @@ class ViewUserContestResult extends Page implements HasForms
 
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }
 
-    private function getTypeOfAnswers($questionsId): array
+    private function getTypeOfAnswers($questionsId): string|array
     {
         try {
 
@@ -292,16 +281,15 @@ class ViewUserContestResult extends Page implements HasForms
             }
 
             return $output;
+
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }
 
-    private function getQuestionTitle($questionId)
+    private function getQuestionTitle($questionId): HtmlString|array
     {
         try {
 
@@ -334,9 +322,7 @@ class ViewUserContestResult extends Page implements HasForms
 
         } catch (\Exception $e) {
 
-            Log::error("Error in " . __FUNCTION__ . ": {$e->getMessage()}");
-
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return data_when_error($e);
 
         }
     }

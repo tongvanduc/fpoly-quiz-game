@@ -3,14 +3,15 @@
 namespace App\Filament\Custom\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\CheckboxList as CheckboxListBase;
 use Illuminate\Contracts\Support\Arrayable;
 
-class CheckboxList extends \Filament\Forms\Components\CheckboxList
+class CheckboxList extends CheckboxListBase
 {
 
     protected string $view = 'filament.custom.components.checkbox-list';
 
-    protected array $types = [];
+    protected array|Arrayable|string|Closure|null $types = null;
 
     public function type(array|Arrayable|string|Closure|null $types): static
     {
