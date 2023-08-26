@@ -182,45 +182,20 @@ class ViewUserContestResult extends Page implements HasForms
 
     private function formatTotalTime($totalTime): string|array
     {
-        try {
+        $interval = CarbonInterval::seconds($totalTime);
 
-            $interval = CarbonInterval::seconds($totalTime);
-
-            // Định dạng đầu ra theo ngôn ngữ hiện tại của ứng dụng
-            // In ra kết quả
-            return $interval->cascade()->locale(app()->getLocale())->forHumans();
-
-        } catch (\Exception $e) {
-
-            return data_when_error($e);
-
-        }
+        // Định dạng đầu ra theo ngôn ngữ hiện tại của ứng dụng => In ra kết quả
+        return $interval->cascade()->locale(app()->getLocale())->forHumans();
     }
 
     private function formatAnswers($answers): array
     {
-        try {
-
-            return collect($answers)->sortBy('order')->pluck('content', 'id')->toArray();
-
-        } catch (\Exception $e) {
-
-            return data_when_error($e);
-
-        }
+        return collect($answers)->sortBy('order')->pluck('content', 'id')->toArray();
     }
 
     private function getAnsweredIds($questionsId)
     {
-        try {
-
-            return $this->contestResult->results[$questionsId];
-
-        } catch (\Exception $e) {
-
-            return data_when_error($e);
-
-        }
+        return $this->contestResult->results[$questionsId];
     }
 
     private function getQuestionStatistics($questionsId): string|array
@@ -252,8 +227,9 @@ class ViewUserContestResult extends Page implements HasForms
             return "[{$text}]";
 
         } catch (\Exception $e) {
-
-            return data_when_error($e);
+            data_when_error($e);
+            
+            return "[]";
 
         }
     }
@@ -283,8 +259,9 @@ class ViewUserContestResult extends Page implements HasForms
             return $output;
 
         } catch (\Exception $e) {
-
-            return data_when_error($e);
+            data_when_error($e);
+            
+            return [];
 
         }
     }
@@ -321,8 +298,9 @@ class ViewUserContestResult extends Page implements HasForms
             return new HtmlString($html);
 
         } catch (\Exception $e) {
-
-            return data_when_error($e);
+            data_when_error($e);
+            
+            return new HtmlString("<div></div>");
 
         }
     }
