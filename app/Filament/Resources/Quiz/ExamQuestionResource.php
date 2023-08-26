@@ -35,10 +35,13 @@ class ExamQuestionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('quiz_exam_id')
+                Forms\Components\Select::make('question_exam')
                     ->label('Exam')
-                    ->options(Exam::all()->pluck('name', 'id'))
-                    ->searchable()
+                    ->multiple()
+                    ->relationship('question_exam', 'name')
+                    ->suffixIcon('heroicon-o-rectangle-stack')
+                    ->searchable(['name'])
+                    ->preload()
                     ->required(),
 
                 Forms\Components\Toggle::make('is_active')
@@ -129,6 +132,7 @@ class ExamQuestionResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
+                    ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('title_extra')

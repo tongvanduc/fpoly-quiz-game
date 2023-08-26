@@ -113,6 +113,12 @@ class ExamResource extends Resource
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),
+
+
+                Forms\Components\CheckboxList::make('exam_question')
+                    ->relationship('exam_question','title_origin')
+                    ->columns(2)
+                    ->columnSpan('full'),
             ])
             ->columns(3);
     }
@@ -135,6 +141,7 @@ class ExamResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
+                    ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
@@ -252,6 +259,8 @@ class ExamResource extends Resource
     {
         return [
             'index' => Pages\ListExams::route('/'),
+            'create' => Pages\CreateExam::route('/create'),
+            'edit' => Pages\EditExam::route('/{record}/edit'),
         ];
     }
 }
