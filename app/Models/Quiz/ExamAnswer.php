@@ -17,6 +17,11 @@ class ExamAnswer extends Model
         return $this->belongsTo(ExamAnswer::class, 'quiz_exam_question_id');
     }
 
+//    public function exam_questions_only_active()
+//    {
+//        return $this->belongsTo(ExamAnswer::class, 'quiz_exam_question_id')->active();
+//    }
+
     public function exam_questions_only_active()
     {
         return $this->belongsTo(ExamAnswer::class, 'quiz_exam_question_id')->active();

@@ -135,6 +135,7 @@ class ExamResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
+                    ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
@@ -213,13 +214,16 @@ class ExamResource extends Resource
                     ->slideOver()
                     ->modalWidth('7xl')
                     ->modalContent(
-                        function (Exam $exam) {
-                            $questions = ExamQuestion::where('quiz_exam_id', $exam->id)
-                                ->orderBy('id', 'desc')
-                                ->get();
+                        function ($record) {
+                            $examId = $record->id;
+
+                            $questions = ExamQuestion::whereHas('questions_exams',
+                                function ($query) use ($examId) {
+                                $query->where('quiz_exam_id', $examId);
+                            })->get();
 
                             return view('filament.shows.question',
-                                ['questions' => $questions, 'label' => $exam->name]);
+                                ['questions' => $questions, 'label' => $record->name]);
                         }
                     ),
 
@@ -252,6 +256,8 @@ class ExamResource extends Resource
     {
         return [
             'index' => Pages\ListExams::route('/'),
+            'create' => Pages\CreateExam::route('/create'),
+            'edit' => Pages\EditExam::route('/{record}/edit'),
         ];
     }
 }

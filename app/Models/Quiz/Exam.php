@@ -18,15 +18,26 @@ class Exam extends Model
         return $this->hasMany(ExamResult::class, 'quiz_exam_id');
     }
 
-    public function exam_questions()
-    {
-        return $this->hasMany(ExamQuestion::class, 'quiz_exam_id');
-    }
+//    public function exam_questions()
+//    {
+//        return $this->hasMany(ExamQuestion::class, 'quiz_exam_id');
+//    }
 
     public function exam_questions_only_active()
     {
         return $this->hasMany(ExamQuestion::class, 'quiz_exam_id')->active();
     }
+
+    public function exams_questions()
+    {
+        return $this->belongsToMany(ExamQuestion::class, 'exams_has_questions','quiz_exam_id', 'quiz_exam_question_id');
+    }
+
+    public function exams_questions_only_active()
+    {
+        return $this->belongsToMany(ExamQuestion::class, 'exams_has_questions','quiz_exam_id', 'quiz_exam_question_id')->active();
+    }
+
 
     /**
      * Scope a query to only include active users.

@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('quiz_exam_questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('quiz_exam_id')->index();
             $table->string('title_origin')->comment('Tiêu đề câu hỏi');
             $table->string('image')->nullable()->comment('Hình ảnh câu hỏi');
             $table->text('title_extra')->nullable()->comment('Tiêu đề bổ sung, thằng này ở bên dưới ảnh');

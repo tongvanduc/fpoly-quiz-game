@@ -44,7 +44,7 @@ class ViewUserDetail extends Page implements HasTable
     {
         return [
             UserInformationWidget::make([
-                'user' => $this->user,
+                'user' => $this->user
             ]),
         ];
     }
@@ -85,5 +85,4 @@ class ViewUserDetail extends Page implements HasTable
                     }),
             ]);
     }
-
 }
