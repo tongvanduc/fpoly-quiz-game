@@ -38,8 +38,10 @@ class ExamQuestionResource extends Resource
                 Forms\Components\Select::make('question_exam')
                     ->label('Exam')
                     ->multiple()
-                    ->relationship('question_exam', 'name')
+                    ->relationship('questions_exams', 'name')
                     ->suffixIcon('heroicon-o-rectangle-stack')
+                    ->placeholder('Search for the exam here...')
+                    ->loadingMessage('Exam loading...')
                     ->searchable(['name'])
                     ->preload()
                     ->required(),

@@ -33,6 +33,12 @@ class Exam extends Model
         return $this->belongsToMany(ExamQuestion::class, 'exams_has_questions','quiz_exam_id', 'quiz_exam_question_id');
     }
 
+    public function exam_question_only_active()
+    {
+        return $this->belongsToMany(ExamQuestion::class, 'exams_has_questions','quiz_exam_id', 'quiz_exam_question_id');
+    }
+
+
     /**
      * Scope a query to only include active users.
      */

@@ -113,12 +113,6 @@ class ExamResource extends Resource
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),
-
-
-                Forms\Components\CheckboxList::make('exam_question')
-                    ->relationship('exam_question','title_origin')
-                    ->columns(2)
-                    ->columnSpan('full'),
             ])
             ->columns(3);
     }
@@ -220,13 +214,16 @@ class ExamResource extends Resource
                     ->slideOver()
                     ->modalWidth('7xl')
                     ->modalContent(
-                        function (Exam $exam) {
-                            $questions = ExamQuestion::where('quiz_exam_id', $exam->id)
-                                ->orderBy('id', 'desc')
-                                ->get();
+                        function ($record) {
+                            $examId = $record->id;
+
+                            $questions = ExamQuestion::whereHas('questions_exams',
+                                function ($query) use ($examId) {
+                                $query->where('quiz_exam_id', $examId);
+                            })->get();
 
                             return view('filament.shows.question',
-                                ['questions' => $questions, 'label' => $exam->name]);
+                                ['questions' => $questions, 'label' => $record->name]);
                         }
                     ),
 

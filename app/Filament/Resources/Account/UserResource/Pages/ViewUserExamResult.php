@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Account\UserResource\Pages;
 
 use App\Filament\Custom\Forms\Components\CheckboxList;
 use App\Filament\Resources\Account\UserResource;
+use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamQuestion;
 use App\Models\Quiz\ExamResult;
 use App\Models\User;
@@ -50,8 +51,14 @@ class ViewUserExamResult extends Page implements HasForms
 
         $this->exam = $this->examResult->exam;
 
-        $this->examQuestion = ExamQuestion::with('exam_answers_only_active')
-            ->where('quiz_exam_id', $this->examResult->quiz_exam_id)
+//        $this->examQuestion = ExamQuestion::with('exam_answers_only_active')
+//            ->where('quiz_exam_id', $this->examResult->quiz_exam_id)
+//            ->get();
+
+        $this->examQuestion = ExamQuestion::whereHas('questions_exams', function ($query) {
+            $query->where('quiz_exam_id', $this->examResult->quiz_exam_id);
+        })
+            ->with('exam_answers_only_active')
             ->get();
 
         $this->form
@@ -146,13 +153,11 @@ class ViewUserExamResult extends Page implements HasForms
                     ->schema([
                         Forms\Components\Section::make(fn($get) => $this->getQuestionTitle($get('id')))
                             ->schema([
-
                                 CheckboxList::make('exam_answers_only_active')
                                     ->options(fn($get) => $this->formatAnswers($get('exam_answers_only_active')))
                                     ->type(fn($get) => $this->getTypeOfAnswers($get('id')))
                                     ->disabled()
                                     ->hiddenLabel()
-
                             ])
                             ->description(fn($get) => $this->getQuestionStatistics($get('id')))
                             ->collapsed(false)
@@ -171,8 +176,7 @@ class ViewUserExamResult extends Page implements HasForms
 
     private function getExamLabel(): HtmlString
     {
-
-        $imgSrc = asset($this->exam->image);
+        $imgSrc = asset('storage/' . ($this->exam->image != null ? $this->exam->image : 'image/no-image-icon.png'));
 
         $html = "<img src='{$imgSrc}' class='rounded-lg mr-4' alt='{$this->exam->name}'>";
 
@@ -254,10 +258,9 @@ class ViewUserExamResult extends Page implements HasForms
 
         $html = "<span>{$question['title_origin']}</span>";
 
+        $imgSrc = !empty($question['image']) ? asset('storage/'.$question['image']) : asset('image/no-image-icon.png');
+
         if (!empty($question['image'])) {
-
-            $imgSrc = asset($question['image']);
-
             $alt = $question['title_extra'] ?? $question['title_origin'];
 
             $html .= "
@@ -272,10 +275,13 @@ class ViewUserExamResult extends Page implements HasForms
             }
 
             $html .= "</div>";
-
+        }else{
+            $html .= "
+                    <div class='flex flex-col items-center my-2'>
+                        <img src='{$imgSrc}' class='mx-auto rounded-lg my-2 block' style='width: 30%;'>
+                    ";
         }
 
         return new HtmlString($html);
     }
-
 }

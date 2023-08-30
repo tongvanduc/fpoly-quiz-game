@@ -35,9 +35,14 @@ class ExamQuestion extends Model
         return $this->belongsTo(Exam::class, 'quiz_exam_id')->active();
     }
 
-    public function question_exam()
+    public function questions_exams()
     {
         return $this->belongsToMany(Exam::class, 'exams_has_questions','quiz_exam_question_id', 'quiz_exam_id');
+    }
+
+    public function questions_exams_only_active()
+    {
+        return $this->belongsToMany(Exam::class, 'exams_has_questions','quiz_exam_question_id', 'quiz_exam_id')->active();
     }
 
     /**
