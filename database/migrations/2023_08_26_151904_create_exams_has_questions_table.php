@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exams_has_questions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('quiz_exam_id')->index()->comment('id của cuộc thì');
-            $table->unsignedBigInteger('quiz_exam_question_id')->index()->comment('id của của câu hỏi');
-            $table->timestamps();
+            $table->unsignedBigInteger('quiz_exam_id')->comment('id của cuộc thì');
+            $table->unsignedBigInteger('quiz_exam_question_id')->comment('id của của câu hỏi');
+            $table->primary(['quiz_exam_id', 'quiz_exam_question_id']);
         });
     }
 
