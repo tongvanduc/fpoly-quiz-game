@@ -51,10 +51,6 @@ class ViewUserExamResult extends Page implements HasForms
 
         $this->exam = $this->examResult->exam;
 
-//        $this->examQuestion = ExamQuestion::with('exam_answers_only_active')
-//            ->where('quiz_exam_id', $this->examResult->quiz_exam_id)
-//            ->get();
-
         $this->examQuestion = ExamQuestion::whereHas('questions_exams', function ($query) {
             $query->where('quiz_exam_id', $this->examResult->quiz_exam_id);
         })
