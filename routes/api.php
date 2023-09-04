@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthenController;
-use App\Http\Controllers\API\Quiz\ExamController;
-use App\Http\Controllers\API\Quiz\ExamResultController;
+use App\Http\Controllers\API\Quiz\ContestController;
+use App\Http\Controllers\API\Quiz\ContestResultController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,15 +24,15 @@ Route::middleware('auth:sanctum')
 
         Route::post('logout', [AuthenController::class, 'logout']);
 
-        Route::prefix('exams')
+        Route::prefix('contests')
             ->group(function () {
-                Route::get('get-info/{code}', [ExamController::class, 'getInfoByCode']);
-                Route::get('get-result/{code}/{userID?}', [ExamController::class, 'getResultByCode']);
-                Route::get('get-list-by-user-id/{userID}', [ExamController::class, 'getListByUserID']);
+                Route::get('get-info/{code}', [ContestController::class, 'getInfoByCode']);
+                Route::get('get-result/{code}/{userID?}', [ContestController::class, 'getResultByCode']);
+                Route::get('get-list-by-user-id/{userID}', [ContestController::class, 'getListByUserID']);
             });
 
-        Route::prefix('exam_results')
+        Route::prefix('contest_results')
             ->group(function () {
-                Route::post('/', [ExamResultController::class, 'store']);
+                Route::post('/', [ContestResultController::class, 'store']);
             });
     });

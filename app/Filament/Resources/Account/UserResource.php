@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\Account;
 
 use App\Filament\Resources\Account\UserResource\Pages;
+use App\Models\Quiz\ContestResult;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+
 
 class UserResource extends Resource
 {
@@ -87,7 +90,6 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'view' => Pages\ViewUserDetail::route('/{record}'),
-            'exam_result' => Pages\ViewUserExamResult::route('/{record}/exam_result/{related}'),
         ];
     }
 }
