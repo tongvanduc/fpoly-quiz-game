@@ -29,8 +29,8 @@ class ExamController extends Controller
             $exam = $this->exam->query()
                 ->active()
                 ->with([
-                    'exam_questions_only_active',
-                    'exam_questions_only_active.exam_answers_only_active'
+                    'exams_questions_only_active',
+                    'exams_questions_only_active.exam_answers_only_active'
                 ])
                 ->where('code', $code)->firstOrFail();
 
@@ -54,8 +54,8 @@ class ExamController extends Controller
                         });
                     },
                     'exam_results.user',
-                    'exam_questions_only_active',
-                    'exam_questions_only_active.exam_answers_only_active'
+                    'exams_questions_only_active',
+                    'exams_questions_only_active.exam_answers_only_active'
                 ])
                 ->where('code', $code)
                 ->firstOrFail();
@@ -75,9 +75,8 @@ class ExamController extends Controller
 
             $examIDs = $this->examResult->query()
                 ->select('quiz_exam_id')
-                ->distinct()
                 ->where('user_id', $user->id)
-                ->pluck('quiz_exam_id')->toArray();
+                ->pluck('quiz_exam_id')->unique()->toArray();
 
             $exams = $this->exam->query()
                 ->with([
