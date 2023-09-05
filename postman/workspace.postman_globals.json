@@ -1,0 +1,27 @@
+{
+	"id": "75d504ed-a382-484c-8b2d-412cf1c9d9c7",
+	"values": [
+		{
+			"key": "HOST",
+			"value": "https://quiz.upstore.top",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "BASE_IMG",
+			"value": "https://quiz.upstore.top/storage/",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "HOST_LOCAL",
+			"value": "http://quiz_game.test",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2023-09-05T03:09:01.928Z",
+	"_postman_exported_using": "Postman/10.17.5"
+}

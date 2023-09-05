@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "a2d678b9-7c28-4f2c-81cd-8edc35cba3f9",
+		"name": "Quiz Game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28830865",
+		"_collection_link": "https://blue-moon-339974.postman.co/workspace/Team-Workspace~f066686b-0741-464d-8a55-6ac70cafc792/collection/28830865-a2d678b9-7c28-4f2c-81cd-8edc35cba3f9?action=share&source=collection_link&creator=28830865"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@fpt.edu.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/api/login",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|MPjqk3VODEIwZ3BuwEDxJX3BkVcrtKUq3IE1VsKx",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@fpt.edu.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/api/logout",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|MiCwyZp0KQfPkER1MmszagHGrnzJf64aonFKnomR",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Student 2",
+							"type": "text"
+						},
+						{
+							"key": "machine_id",
+							"value": "345678ABC",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "student2@fpt.edu.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "student2",
+							"type": "text"
+						},
+						{
+							"key": "password_confirmation",
+							"value": "student2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/api/register",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getInfoByCode",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|laravel_sanctum_mQO7VBD2ycMyW7UuDQInujzYQ0fyk9BoWfSCwmqE2ec4a65a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/api/exams/get-info/CR35SNP3",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"exams",
+						"get-info",
+						"CR35SNP3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getListByUserID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|laravel_sanctum_mQO7VBD2ycMyW7UuDQInujzYQ0fyk9BoWfSCwmqE2ec4a65a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/api/exams/get-list-by-user-id/2",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"exams",
+						"get-list-by-user-id",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SaveContestResult",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|MPjqk3VODEIwZ3BuwEDxJX3BkVcrtKUq3IE1VsKx",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": 1,\r\n    \"quiz_contest_id\": 1,\r\n    \"results\": {\r\n        \"1\": [\r\n            1,\r\n            40\r\n        ],\r\n        \"2\": [\r\n            41,\r\n            80\r\n        ],\r\n        \"3\": [\r\n            81,\r\n            120\r\n        ],\r\n        \"4\": [\r\n            121,\r\n            160\r\n        ],\r\n        \"5\": [\r\n            161,\r\n            200\r\n        ],\r\n        \"6\": [\r\n            201,\r\n            240\r\n        ],\r\n        \"7\": [\r\n            241,\r\n            280\r\n        ],\r\n        \"8\": [\r\n            281,\r\n            320\r\n        ],\r\n        \"9\": [\r\n            321,\r\n            360\r\n        ],\r\n        \"10\": [\r\n            361,\r\n            400\r\n        ]\r\n    },\r\n    \"point\": 10,\r\n    \"total_time\": 300\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST}}/api/exam_results",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"exam_results"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getResultByCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|laravel_sanctum_mQO7VBD2ycMyW7UuDQInujzYQ0fyk9BoWfSCwmqE2ec4a65a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/api/exams/get-result/CR35SNP3",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"exams",
+						"get-result",
+						"CR35SNP3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getResultByCodeAndUserID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|laravel_sanctum_mQO7VBD2ycMyW7UuDQInujzYQ0fyk9BoWfSCwmqE2ec4a65a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/api/exams/get-result/CR35SNP3/2",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"exams",
+						"get-result",
+						"CR35SNP3",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
