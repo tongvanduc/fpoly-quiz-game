@@ -108,7 +108,7 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                @if($question->is_active === 0)
+                                @if($question->is_active == 0)
                                     <x-filament::icon
                                         :icon="$false"
                                         class="text-danger-400 dark:text-danger-500
