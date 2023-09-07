@@ -53,7 +53,7 @@ class ViewUserDetail extends Page implements HasTable
     {
         $query = ExamResult::query()
             ->where('user_id', $this->user->id)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         $table->query($query);
 
