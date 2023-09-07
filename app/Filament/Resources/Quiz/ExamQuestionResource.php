@@ -35,84 +35,94 @@ class ExamQuestionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('quiz_exam_id')
-                    ->label('Exam')
-                    ->options(Exam::all()->pluck('name', 'id'))
-                    ->searchable()
-                    ->required(),
-
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Is active')
-                    ->helperText('This question will be hidden from the exam')
-                    ->inline(false)
-                    ->default(true),
-
-                Forms\Components\Textarea::make('title_origin')
-                    ->columnSpan('full')
-                    ->placeholder('Enter question title here')
-                    ->required(),
-
-                Forms\Components\FileUpload::make('image')
-                    ->label('Image')
-                    ->image()
-                    ->columnSpan('full'),
-
-                Forms\Components\Textarea::make('title_extra')
-                    ->placeholder('Add more questions if any')
-                    ->columnSpan('full'),
-
-                Forms\Components\Textarea::make('explain')
-                    ->placeholder('Explain the answer if any')
-                    ->columnSpan('full'),
-
-                Forms\Components\Repeater::make('exam_answers')
-                    ->label('Answers')
-                    ->relationship()
+                Forms\Components\Section::make('Question')
                     ->schema([
-                        Forms\Components\TextInput::make('content')
-                            ->required()
-                            ->label('Content')
-                            ->placeholder('Answer content')
-                            ->columnSpan([
-                                'md' => 5,
-                            ]),
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                Forms\Components\Select::make('quiz_exam_id')
+                                    ->label('Exam')
+                                    ->options(Exam::all()->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->required(),
 
-                        Forms\Components\TextInput::make('order')
-                            ->gt(0)
-                            ->label('Order')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(255)
-                            ->placeholder('Enter order')
-                            ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
-                            ->required()
-                            ->columnSpan([
-                                'md' => 1,
-                            ]),
+                                Forms\Components\Toggle::make('is_active')
+                                    ->label('Is active')
+                                    ->helperText('This question will be hidden from the exam')
+                                    ->inline(false)
+                                    ->default(true),
+                            ])
+                            ->columns(2),
 
-                        Forms\Components\Toggle::make('is_true')
-                            ->label('Is true')
-                            ->helperText('Correct answer')
-                            ->default(false)
-                            ->columnSpan([
-                                'md' => 2,
-                            ]),
+                        Forms\Components\Textarea::make('title_origin')
+                            ->columnSpan('full')
+                            ->placeholder('Enter question title here')
+                            ->required(),
 
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Is active')
-                            ->helperText('This answer will be hidden from the question.')
-                            ->default(true)
-                            ->columnSpan([
-                                'md' => 2,
-                            ]),
-                    ])
-                    ->deletable(false)
-                    ->defaultItems(1)
-                    ->columns([
-                        'md' => 10
-                    ])
-                    ->columnSpan('full')
-                    ->required(),
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Image')
+                            ->image()
+                            ->columnSpan('full'),
+
+                        Forms\Components\Textarea::make('title_extra')
+                            ->placeholder('Add more questions if any')
+                            ->columnSpan('full'),
+
+                        Forms\Components\Textarea::make('explain')
+                            ->placeholder('Explain the answer if any')
+                            ->columnSpan('full'),
+                    ]),
+
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Repeater::make('exam_answers')
+                            ->label('Answers')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('content')
+                                    ->required()
+                                    ->label('Content')
+                                    ->placeholder('Answer content')
+                                    ->columnSpan([
+                                        'md' => 5,
+                                    ]),
+
+                                Forms\Components\TextInput::make('order')
+                                    ->gt(0)
+                                    ->label('Order')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(255)
+                                    ->placeholder('Enter order')
+                                    ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
+                                    ->required()
+                                    ->columnSpan([
+                                        'md' => 1,
+                                    ]),
+
+                                Forms\Components\Toggle::make('is_true')
+                                    ->label('Is true')
+                                    ->helperText('Correct answer')
+                                    ->default(false)
+                                    ->columnSpan([
+                                        'md' => 2,
+                                    ]),
+
+                                Forms\Components\Toggle::make('is_active')
+                                    ->label('Is active')
+                                    ->helperText('This answer will be hidden from the question.')
+                                    ->default(true)
+                                    ->columnSpan([
+                                        'md' => 2,
+                                    ]),
+                            ])
+                            ->deletable(false)
+                            ->defaultItems(1)
+                            ->columns([
+                                'md' => 10
+                            ])
+                            ->columnSpan('full')
+                            ->required(),
+                    ]),
             ]);
     }
 
