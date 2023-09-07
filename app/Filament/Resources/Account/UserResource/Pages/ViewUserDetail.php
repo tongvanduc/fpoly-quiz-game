@@ -52,11 +52,8 @@ class ViewUserDetail extends Page implements HasTable
     public function table(Table $table): Table
     {
         $query = ExamResult::query()
-            ->whereIn(DB::raw('(user_id, quiz_exam_id, point)'), function ($query) {
-                $query->select('user_id', 'quiz_exam_id', DB::raw('MAX(point)'))
-                    ->from('quiz_exam_results')
-                    ->groupBy('user_id', 'quiz_exam_id');
-            })->where('user_id', $this->user->id);
+            ->where('user_id', $this->user->id)
+            ->orderBy('created_at', 'desc');
 
         $table->query($query);
 
