@@ -74,7 +74,7 @@
                                     <div class="flex-space-x-8 gap-x-1.5">
                                         <img
                                             class="max-w-none object-cover object-center"
-                                            src="{{ $question->image != '' ? asset('storage/'.$question->image) : asset('image/no-image-icon.png') }}" width="50" height="50"
+                                            src="{{ $question->image ? asset('storage/'.$question->image) : asset('image/no-image-icon.png') }}" width="50" height="50"
                                             alt="">
                                     </div>
                                 </div>
