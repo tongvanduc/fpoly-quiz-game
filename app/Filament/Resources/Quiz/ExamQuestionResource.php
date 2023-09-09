@@ -151,6 +151,7 @@ class ExamQuestionResource extends Resource
                 Tables\Columns\TextColumn::make('title_extra')
                     ->label('Title Extra')
                     ->searchable()
+                    ->default(__('noun'))
                     ->sortable()
                     ->toggleable()
                     ->wrap(),

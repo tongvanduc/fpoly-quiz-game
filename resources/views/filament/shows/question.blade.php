@@ -88,7 +88,7 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                {{ $question->title_extra ?? '' }}
+                                {{ $question->title_extra ?? 'noun' }}
                             </span>
                         </td>
 
@@ -98,7 +98,7 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                {{ $question->explain ?? '' }}
+                                {{ $question->explain ?? 'noun' }}
                             </span>
                         </td>
 

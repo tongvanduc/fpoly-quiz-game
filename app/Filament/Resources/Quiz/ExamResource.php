@@ -126,7 +126,8 @@ class ExamResource extends Resource
                     ->label('Name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('code')
                     ->label('Code')
