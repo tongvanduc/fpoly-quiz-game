@@ -140,11 +140,13 @@ class ExamQuestionResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
+                    ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('title_extra')
                     ->label('Title Extra')
                     ->searchable()
+                    ->default(__('noun'))
                     ->sortable()
                     ->toggleable()
                     ->wrap(),

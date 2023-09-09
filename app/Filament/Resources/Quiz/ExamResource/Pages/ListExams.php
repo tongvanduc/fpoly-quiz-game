@@ -16,7 +16,9 @@ class ListExams extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->modalWidth('5xl')
+                ->slideOver(),
         ];
     }
 

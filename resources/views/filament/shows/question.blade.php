@@ -74,7 +74,7 @@
                                     <div class="flex-space-x-8 gap-x-1.5">
                                         <img
                                             class="max-w-none object-cover object-center"
-                                            src="{{ asset('storage/'.$question->image) }}" width="50" height="50"
+                                            src="{{ $question->image != '' ? asset('storage/'.$question->image) : asset('image/no-image-icon.png') }}" width="50" height="50"
                                             alt="">
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                {{ $question->title_extra ?? '' }}
+                                {{ $question->title_extra ?? 'noun' }}
                             </span>
                         </td>
 
@@ -98,7 +98,7 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                {{ $question->explain ?? '' }}
+                                {{ $question->explain ?? 'noun' }}
                             </span>
                         </td>
 

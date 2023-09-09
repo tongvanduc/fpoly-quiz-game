@@ -126,7 +126,8 @@ class ExamResource extends Resource
                     ->label('Name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('code')
                     ->label('Code')
@@ -136,6 +137,7 @@ class ExamResource extends Resource
 
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
+                    ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
