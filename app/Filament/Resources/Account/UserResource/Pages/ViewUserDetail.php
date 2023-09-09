@@ -62,7 +62,8 @@ class ViewUserDetail extends Page implements HasTable
                 TextColumn::make('exam.name')
                     ->label('Exam')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('point')
                     ->searchable()
