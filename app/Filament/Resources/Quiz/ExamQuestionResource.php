@@ -60,6 +60,7 @@ class ExamQuestionResource extends Resource
 
                         Forms\Components\Textarea::make('title_origin')
                             ->columnSpan('full')
+                            ->maxLength(255)
                             ->placeholder('Enter question title here')
                             ->required(),
 
