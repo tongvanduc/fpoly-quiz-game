@@ -44,6 +44,7 @@ class ExamResource extends Resource
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->autofocus()
+                                    ->maxValue(255)
                                     ->placeholder('Name of the exam')
                                     ->live(onBlur: true),
 
