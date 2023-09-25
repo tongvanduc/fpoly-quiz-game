@@ -12,7 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
+use Filament\Actions;
 
 class ViewUserDetail extends Page implements HasTable
 {
@@ -39,7 +39,6 @@ class ViewUserDetail extends Page implements HasTable
         return $this->user->name;
     }
 
-
     protected function getHeaderWidgets(): array
     {
         return [
@@ -53,7 +52,7 @@ class ViewUserDetail extends Page implements HasTable
     {
         $query = ExamResult::query()
             ->where('user_id', $this->user->id)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         $table->query($query);
 
