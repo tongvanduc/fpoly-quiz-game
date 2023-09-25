@@ -6,8 +6,11 @@ use App\Models\Quiz\ExamResult;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ExamReultExport implements FromCollection,WithHeadings,WithMapping
+class ExamResultExport implements FromCollection,WithHeadings,WithMapping,ShouldAutoSize,WithStyles
 {
     public $examId;
 
@@ -54,6 +57,13 @@ class ExamReultExport implements FromCollection,WithHeadings,WithMapping
             $result->total_time,
             $result->created_at,
             $result->updated_at
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1    => ['font' => ['bold' => true]],
         ];
     }
 }

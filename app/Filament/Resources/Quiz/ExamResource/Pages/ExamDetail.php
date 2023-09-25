@@ -9,7 +9,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ExamReultExport;
+use App\Exports\ExamResultExport;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Models\Quiz\ExamResult;
@@ -47,7 +47,7 @@ class ExamDetail extends Page implements HasTable
                 ->label('Xuất file excel')
                 ->requiresConfirmation()
                 ->action(fn () =>
-                    Excel::download(new ExamReultExport($this->examId, $this->count), 'exam_statistical.xlsx')
+                    Excel::download(new ExamResultExport($this->examId, $this->count), 'exam_statistical.xlsx')
                 ),
         ];
     }
