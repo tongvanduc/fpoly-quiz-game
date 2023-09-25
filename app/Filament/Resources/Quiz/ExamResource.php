@@ -208,6 +208,14 @@ class ExamResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('detail')
+                    ->label('Detail')
+                    ->icon('heroicon-m-eye')
+                    ->color('gray')
+                    ->url(function ($record) {
+                        return route('filament.admin.resources.quiz.exams.exam_detail',['record' => $record->id]);
+                    }),
+
                 Tables\Actions\Action::make('question')
                     ->label('Questions')
                     ->icon('heroicon-m-eye')
@@ -255,6 +263,7 @@ class ExamResource extends Resource
     {
         return [
             'index' => Pages\ListExams::route('/'),
+            'exam_detail' => Pages\ExamDetail::route('/{record}'),
         ];
     }
 }
