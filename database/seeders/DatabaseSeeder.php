@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Config\Campus;
+use App\Models\Config\Major;
 use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamAnswer;
 use App\Models\Quiz\ExamQuestion;
@@ -24,25 +26,57 @@ class DatabaseSeeder extends Seeder
         // Clear images
         Storage::deleteDirectory('public');
 
+
+        // create campus
+        $this->command->warn(PHP_EOL . 'Creating Campus ...');
+
+        $campus = Campus::query()->create([
+            'name' => 'Test',
+            'code' => 'test',
+            'status' => 1,
+        ]);
+
+        $this->command->info('Campus created.');
+
+
+        // create major
+        $this->command->warn(PHP_EOL . 'Creating Major ...');
+
+        $major = Major::query()->create([
+            'name' => 'Test',
+            'code' => 'test',
+            'status' => 1,
+        ]);
+
+        $this->command->info('Major created.');
+
+        $campus_major_id = \DB::table('campus_majors')->first()->id;
+
         // Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
-        User::factory(1)->create([
+        $admin = User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@fpt.edu.com',
             'type_user' => TYPE_USER_ADMIN,
+            'campus_major_id' => $campus_major_id,
         ]);
+
         $this->command->info('Admin User created.');
 
         // Student
         $this->command->warn(PHP_EOL . 'Creating Student User...');
         User::factory(10)->create([
             'type_user' => TYPE_USER_STUDENT,
+            'campus_major_id' => $campus_major_id,
         ]);
         $this->command->info('Student User created.');
 
         // Exam
         $this->command->warn(PHP_EOL . 'Creating Exam ...');
-        Exam::factory(10)->create();
+        Exam::factory(10)->create([
+            'campus_major_id' => $campus_major_id,
+            'created_by' => $admin->first()->id,
+        ]);
         $this->command->info('Exam user created.');
 
         $this->command->warn(PHP_EOL . 'Creating Exam Question ...');
@@ -56,7 +90,7 @@ class DatabaseSeeder extends Seeder
         $this->command->warn(PHP_EOL . 'Creating Exam Answer ...');
         foreach (ExamQuestion::all() as $examQuestion) {
             ExamAnswer::factory(4)->create([
-                'quiz_exam_question_id' => $examQuestion->id
+                'quiz_exam_question_id' => $examQuestion->id,
             ]);
         }
         $this->command->info('Exam Answer created.');
@@ -83,6 +117,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('Exam Result created.');
+
 
 //        // Blog
 //        $this->command->warn(PHP_EOL . 'Creating blog categories...');

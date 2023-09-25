@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -31,6 +32,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('campus_major_id', auth()->user()->campus_major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
@@ -40,6 +42,20 @@ class UserResource extends Resource
 
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('campus_major.campus.name')
+                    ->label('Campus')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('campus_major.major.name')
+                    ->label('Major')
+                    ->default('')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),

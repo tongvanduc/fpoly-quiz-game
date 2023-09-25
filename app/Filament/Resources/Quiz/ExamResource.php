@@ -4,6 +4,9 @@ namespace App\Filament\Resources\Quiz;
 
 use App\Filament\Resources\Quiz\ExamResource\Pages;
 use App\Filament\Widgets\ExamStats;
+use App\Models\Config\Campus;
+use App\Models\Config\CampusMajor;
+use App\Models\Config\Major;
 use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamQuestion;
 use Carbon\Carbon;
@@ -49,7 +52,7 @@ class ExamResource extends Resource
                                     ->live(onBlur: true),
 
                                 Forms\Components\TextInput::make('code')
-                                    ->default(function (){
+                                    ->default(function () {
                                         return strtoupper(Str::random(8));
                                     })
                                     ->disabled()
@@ -83,9 +86,9 @@ class ExamResource extends Resource
                                     ->columns(2),
                             ]),
 
-                            Forms\Components\FileUpload::make('image')
-                                ->label('Image')
-                                ->image(),
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Image')
+                            ->image(),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -121,6 +124,7 @@ class ExamResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('campus_major_id', auth()->user()->campus_major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
@@ -167,6 +171,28 @@ class ExamResource extends Resource
                     ->boolean()
                     ->sortable()
                     ->toggleable(),
+
+                Tables\Columns\TextColumn::make('campus_major.campus.name')
+                    ->label('Campus')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('campus_major.major.name')
+                    ->label('Major')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -180,19 +206,19 @@ class ExamResource extends Resource
                 Tables\Filters\Filter::make('start_date')
                     ->form([
                         Forms\Components\DatePicker::make('start_date_form')
-                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                            ->placeholder(fn($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
                         Forms\Components\DatePicker::make('start_date_until')
-                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                            ->placeholder(fn($state): string => now()->format('M d, Y')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
                                 $data['start_date_form'] ?? null,
-                                fn (Builder $query, $date): Builder => $query->whereDate('start_date', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('start_date', '>=', $date),
                             )
                             ->when(
                                 $data['start_date_until'] ?? null,
-                                fn (Builder $query, $date): Builder => $query->whereDate('start_date', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('start_date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {

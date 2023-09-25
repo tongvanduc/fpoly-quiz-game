@@ -2,6 +2,8 @@
 
 namespace App\Models\Quiz;
 
+use App\Models\Config\CampusMajor;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +30,28 @@ class Exam extends Model
         return $this->hasMany(ExamQuestion::class, 'quiz_exam_id')->active();
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Exam $exam) {
+
+            if (empty($exam->campus_major_id)) {
+
+                $exam->campus_major_id = auth()->user()->campus_major_id;
+
+                $exam->created_by = auth()->user()->id;
+            }
+        });
+    }
+
     /**
      * Scope a query to only include active users.
      */
@@ -35,4 +59,10 @@ class Exam extends Model
     {
         $query->where('is_active', true);
     }
+
+    public function campus_major()
+    {
+        return $this->belongsTo(CampusMajor::class, 'campus_major_id');
+    }
+
 }
