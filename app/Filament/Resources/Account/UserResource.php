@@ -32,63 +32,63 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('campus_major_id', auth()->user()->campus_major_id))
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+            ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
+                ->columns([
+                    Tables\Columns\TextColumn::make('name')
+                        ->label('Name')
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
 
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    Tables\Columns\TextColumn::make('email')
+                        ->label('Email')
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
 
-                Tables\Columns\TextColumn::make('campus_major.campus.name')
-                    ->label('Campus')
-                    ->default('')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    Tables\Columns\TextColumn::make('major.campus.name')
+                        ->label('Campus')
+                        ->default('')
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
 
-                Tables\Columns\TextColumn::make('campus_major.major.name')
-                    ->label('Major')
-                    ->default('')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    Tables\Columns\TextColumn::make('major.name')
+                        ->label('Major')
+                        ->default('')
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
 
-                Tables\Columns\BadgeColumn::make('email_verified_at')
-                    ->label('Email verification')
-                    ->sortable()
-                    ->toggleable()
-                    ->getStateUsing(fn(User $user
-                    ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
-                    ->colors([
-                        'success' => 'Verified',
-                        'danger' => 'Unverified',
-                    ]),
+                    Tables\Columns\BadgeColumn::make('email_verified_at')
+                        ->label('Email verification')
+                        ->sortable()
+                        ->toggleable()
+                        ->getStateUsing(fn(User $user
+                        ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                        ->colors([
+                            'success' => 'Verified',
+                            'danger' => 'Unverified',
+                        ]),
 
-                Tables\Columns\BadgeColumn::make('type_user')
-                    ->label('Type user')
-                    ->sortable()
-                    ->colors([
-                        'success'
-                    ])
-                    ->toggleable(),
-            ])
-            ->filters([
-                Tables\Filters\TernaryFilter::make('email_verified_at')
-                    ->label('Email verification')
-                    ->nullable()
-                    ->trueLabel('Verified')
-                    ->falseLabel('Unverified'),
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-            ]);
+                    Tables\Columns\BadgeColumn::make('type_user')
+                        ->label('Type user')
+                        ->sortable()
+                        ->colors([
+                            'success'
+                        ])
+                        ->toggleable(),
+                ])
+                ->filters([
+                    Tables\Filters\TernaryFilter::make('email_verified_at')
+                        ->label('Email verification')
+                        ->nullable()
+                        ->trueLabel('Verified')
+                        ->falseLabel('Unverified'),
+                ])
+                ->actions([
+                    Tables\Actions\ViewAction::make(),
+                ]);
     }
 
     public static function getRelations(): array

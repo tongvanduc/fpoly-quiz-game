@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Config\CampusMajor;
+use App\Models\Config\Major;
 use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamResult;
 use Filament\Models\Contracts\FilamentUser;
@@ -40,8 +40,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->type_user === TYPE_USER_ADMIN;
     }
 
-    public function campus_major()
+    public function major()
     {
-        return $this->belongsTo(CampusMajor::class, 'campus_major_id');
+        return $this->belongsTo(Major::class, 'major_id');
     }
 }

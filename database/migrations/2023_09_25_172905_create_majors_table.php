@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('code', 10)->unique();
             $table->boolean('status')->default(true);
+            $table->foreignId('campus_id')->nullable()->index();
             $table->timestamps();
         });
     }

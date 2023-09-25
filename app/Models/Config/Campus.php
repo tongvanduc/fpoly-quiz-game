@@ -20,13 +20,4 @@ class Campus extends Model
         return $this->belongsToMany(Major::class, 'campus_majors');
     }
 
-    /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        static::created(function (Campus $campus) {
-            $campus->majors()->attach(Major::query()->pluck('id'));
-        });
-    }
 }

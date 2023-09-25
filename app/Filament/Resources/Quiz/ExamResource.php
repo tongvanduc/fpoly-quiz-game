@@ -124,7 +124,7 @@ class ExamResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('campus_major_id', auth()->user()->campus_major_id))
+            ->modifyQueryUsing(fn (Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
@@ -172,14 +172,14 @@ class ExamResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('campus_major.campus.name')
+                Tables\Columns\TextColumn::make('major.campus.name')
                     ->label('Campus')
                     ->default('')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('campus_major.major.name')
+                Tables\Columns\TextColumn::make('major.name')
                     ->label('Major')
                     ->default('')
                     ->searchable()
@@ -239,7 +239,7 @@ class ExamResource extends Resource
                     ->icon('heroicon-m-eye')
                     ->color('gray')
                     ->url(function ($record) {
-                        return route('filament.admin.resources.quiz.exams.exam_detail',['record' => $record->id]);
+                        return route('filament.admin.resources.quiz.exams.exam_detail', ['record' => $record->id]);
                     }),
 
                 Tables\Actions\Action::make('question')

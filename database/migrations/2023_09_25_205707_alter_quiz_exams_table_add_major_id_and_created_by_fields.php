@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::table('quiz_exams', function (Blueprint $table) {
             //
-            $table->foreignId('campus_major_id')->nullable();
-            $table->foreignId('created_by')->nullable();
+            $table->foreignId('major_id')->nullable()->index();
+            $table->foreignId('created_by')->nullable()->index();
         });
     }
 
@@ -24,7 +24,9 @@ return new class extends Migration {
     {
         Schema::table('quiz_exams', function (Blueprint $table) {
             //
-            $table->dropColumn('campus_major_id');
+            $table->dropIndex(['major_id']);
+            $table->dropIndex(['created_by']);
+            $table->dropColumn('major_id');
             $table->dropColumn('created_by');
         });
     }

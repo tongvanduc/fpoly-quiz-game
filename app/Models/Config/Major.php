@@ -12,22 +12,13 @@ class Major extends Model
     protected $fillable = [
         'name',
         'code',
-        'status'
+        'status',
+        'campus_id',
     ];
 
-    public function campuses()
+    public function campus()
     {
-        return $this->belongsToMany(Campus::class, 'campus_majors');
-    }
-
-    /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        static::created(function (Major $major) {
-            $major->campuses()->attach(Campus::query()->pluck('id'));
-        });
+        return $this->belongsTo(Campus::class, 'campus_id');
     }
 
 }

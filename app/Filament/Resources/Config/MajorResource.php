@@ -20,6 +20,7 @@ class MajorResource extends Resource
     protected static ?string $navigationGroup = 'Config';
 
     protected static ?string $label = 'Majors';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -39,7 +40,6 @@ class MajorResource extends Resource
                                     ->live(onBlur: true),
 
 
-
                                 Forms\Components\TextInput::make('code')
                                     ->placeholder('Code of the campus')
                                     ->maxValue(10)
@@ -52,7 +52,6 @@ class MajorResource extends Resource
 
                             ]),
                     ])
-
                     ->columnSpan(['lg' => 2]),
             ]);
     }
@@ -73,9 +72,14 @@ class MajorResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-
                 Tables\Columns\ToggleColumn::make('status')
                     ->label('Status')
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('campus.name')
+                    ->label('Campus')
+                    ->searchable()
                     ->sortable()
                     ->toggleable(),
             ])

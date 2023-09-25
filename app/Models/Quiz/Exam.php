@@ -2,7 +2,7 @@
 
 namespace App\Models\Quiz;
 
-use App\Models\Config\CampusMajor;
+use App\Models\Config\Major;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -43,11 +43,12 @@ class Exam extends Model
     {
         static::creating(function (Exam $exam) {
 
-            if (empty($exam->campus_major_id)) {
+            if (empty($exam->major_id)) {
 
-                $exam->campus_major_id = auth()->user()->campus_major_id;
+                $exam->major_id = auth()->user()->major_id;
 
                 $exam->created_by = auth()->user()->id;
+
             }
         });
     }
@@ -60,9 +61,9 @@ class Exam extends Model
         $query->where('is_active', true);
     }
 
-    public function campus_major()
+    public function major()
     {
-        return $this->belongsTo(CampusMajor::class, 'campus_major_id');
+        return $this->belongsTo(Major::class, 'major_id');
     }
 
 }

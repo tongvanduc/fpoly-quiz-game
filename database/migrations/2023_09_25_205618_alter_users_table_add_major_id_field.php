@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->foreignId('campus_major_id')->nullable();
+            $table->foreignId('major_id')->nullable()->index();
         });
     }
 
@@ -24,7 +24,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->dropColumn('campus_major_id');
+            $table->dropIndex(['major_id']);
+            $table->dropColumn('major_id');
         });
     }
 };

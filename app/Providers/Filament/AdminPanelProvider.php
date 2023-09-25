@@ -7,6 +7,7 @@ use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -40,6 +41,20 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Quiz',
                 'Blog',
+                'Config',
+            ])
+            ->navigationItems([
+                NavigationItem::make('Campuses')
+                    ->visible(fn(): bool => !is_super_admin())
+                    ->url(fn() => route('filament.admin.resources.config.campuses.index'))
+                    ->group('Config')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.config.campuses.*')),
+
+                NavigationItem::make('Majors')
+                    ->visible(fn(): bool => !is_super_admin())
+                    ->url(fn() => route('filament.admin.resources.config.majors.index'))
+                    ->group('Config')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.config.majors.*')),
             ])
             ->databaseNotifications()
             ->middleware([
