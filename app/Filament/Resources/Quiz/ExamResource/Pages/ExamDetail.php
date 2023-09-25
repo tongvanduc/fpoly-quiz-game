@@ -80,7 +80,7 @@ class ExamDetail extends Page implements HasTable
                     ->wrap(),
 
                 TextColumn::make('user.email')
-                    ->label('Name')
+                    ->label('Email')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
