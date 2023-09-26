@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Config\Major;
 use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamResult;
 use Filament\Models\Contracts\FilamentUser;
@@ -37,5 +38,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->type_user === TYPE_USER_ADMIN;
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class, 'major_id');
     }
 }

@@ -14,8 +14,28 @@ class StatsOverviewWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Exam', Exam::query()->count()),
-            Stat::make('Total Student', User::query()->where('type_user', TYPE_USER_STUDENT)->count()),
+            Stat::make('Total Exam', function () {
+                $examQuery = Exam::query();
+
+                if (!is_super_admin()) {
+
+                    $examQuery->where('major_id', auth()->user()->major_id);
+
+                }
+
+                return $examQuery->count();
+            }),
+            Stat::make('Total Student', function () {
+                    $studentQuery = User::query()->where('type_user', TYPE_USER_STUDENT);
+
+                    if (!is_super_admin()) {
+
+                        $studentQuery->where('major_id', auth()->user()->major_id);
+
+                    }
+
+                    return $studentQuery->count();
+            }),
         ];
     }
 }

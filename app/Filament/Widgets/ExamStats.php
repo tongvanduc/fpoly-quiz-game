@@ -13,7 +13,17 @@ class ExamStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Exam', Exam::query()->count()),
+            Stat::make('Total Exam', function () {
+                $examQuery = Exam::query();
+
+                if (!is_super_admin()) {
+
+                    $examQuery->where('major_id', auth()->user()->major_id);
+
+                }
+
+                return $examQuery->count();
+            }),
         ];
     }
 }

@@ -19,3 +19,12 @@ if (!function_exists('data_when_error')) {
         ];
     }
 }
+
+if (!function_exists('is_super_admin')) {
+    function is_super_admin($user = null)
+    {
+        $user = $user ?? auth()->user();
+
+        return $user->type_user === TYPE_USER_SUPER_ADMIN;
+    }
+}
