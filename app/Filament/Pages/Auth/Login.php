@@ -11,7 +11,7 @@ class Login extends BasePage
         parent::mount();
 
         $this->form->fill([
-            'email' => 'admin@fpt.edu.com',
+            'email' => 'super-admin@fpt.edu.com',
             'password' => 'password',
             'remember' => true,
         ]);
