@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class CheckboxList extends CheckboxListBase
 {
-    protected string $view = 'filament.custom.components.checkbox-list';
+    protected string $view = 'filament.custome.components.checkbox-list';
 
     protected array|Arrayable|string|Closure|null $types = null;
 
