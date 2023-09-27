@@ -35,7 +35,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->command->info('Campus created.');
 
-
         // create major
         $this->command->warn(PHP_EOL . 'Creating Major ...');
 
@@ -50,22 +49,22 @@ class DatabaseSeeder extends Seeder
 
         // Supper Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
-        $admins = User::factory(1)->create([
+        User::factory(1)->create([
             'name' => 'Super Admin',
             'email' => 'super-admin@fpt.edu.com',
             'type_user' => TYPE_USER_SUPER_ADMIN,
         ]);
-        
+
         // Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
-        $admins = User::factory(1)->create([
+        User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@fpt.edu.com',
             'type_user' => TYPE_USER_ADMIN,
             'major_id' => $major->id,
         ]);
         $this->command->info('Admin User created.');
-        
+
         // Student
         $this->command->warn(PHP_EOL . 'Creating Student User...');
         User::factory(10)->create([

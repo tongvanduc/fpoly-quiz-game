@@ -21,8 +21,9 @@ class ListUsers extends ListRecords
     {
         return [
             null => ListRecords\Tab::make('All'),
-            'admin' => ListRecords\Tab::make()->query(fn ($query) => $query->where('type_user', 'admin')),
-            'student' => ListRecords\Tab::make()->query(fn ($query) => $query->where('type_user', 'student')),
+            'Super-admin' => ListRecords\Tab::make()->query(fn ($query) => $query->where('type_user', TYPE_USER_SUPER_ADMIN)),
+            'Admin' => ListRecords\Tab::make()->query(fn ($query) => $query->where('type_user', TYPE_USER_ADMIN)),
+            'Student' => ListRecords\Tab::make()->query(fn ($query) => $query->where('type_user', TYPE_USER_STUDENT)),
         ];
     }
 }
