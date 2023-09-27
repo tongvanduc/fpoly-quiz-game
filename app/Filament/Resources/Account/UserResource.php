@@ -65,12 +65,11 @@ class UserResource extends Resource
                                     ->label('Password')
                                     ->password()
                                     ->confirmed()
-                                    ->rules(['regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/'])
-                                    ->minValue(6)
+                                    ->minValue(8)
                                     ->maxValue(255)
                                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                                     ->required()
-                                    ->helperText('Mật khẩu ít nhất phải có 6 ký tự, 1 chữ viết hoa, 1 ký tự đặc biệt!')
+                                    ->helperText('Mật khẩu ít nhất phải có 8 ký tự!')
                                     ->placeholder('Enter password here'),
 
                                 Forms\Components\TextInput::make('password_confirmation')

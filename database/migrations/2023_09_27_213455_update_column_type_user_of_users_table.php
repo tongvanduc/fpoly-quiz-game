@@ -12,12 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('type_user', [
-                TYPE_USER_ADMIN,
-                TYPE_USER_STUDENT,
-                TYPE_USER_SUPER_ADMIN
-                ]
-            )->default(TYPE_USER_STUDENT)->after('password');
+            $table->string('type_user', 50)->default(TYPE_USER_STUDENT)->change();
         });
     }
 
@@ -27,7 +22,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->enum('type_user', [
+                TYPE_USER_ADMIN,
+                TYPE_USER_STUDENT
+            ])->default(TYPE_USER_STUDENT)->change();
         });
     }
 };
