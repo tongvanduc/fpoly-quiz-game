@@ -36,7 +36,7 @@ class Form extends Component implements HasForms
     }
 
     public function render()
-    {dd(1);
+    {
         return view('livewire.form');
     }
 }

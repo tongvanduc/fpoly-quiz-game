@@ -2,13 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\LatestOrders;
 use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Widgets\AccountWidget;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;

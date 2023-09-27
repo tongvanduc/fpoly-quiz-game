@@ -35,23 +35,24 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                Widgets\AccountWidget::class,
             ])
             ->navigationGroups([
                 'Quiz',
-                'Blog',
                 'Config',
+                'Account',
+                'Blog',
             ])
             ->navigationItems([
                 NavigationItem::make('Campuses')
-                    ->visible(fn(): bool => !is_super_admin())
+                    ->visible(fn(): bool => is_super_admin())
                     ->url(fn() => route('filament.admin.resources.config.campuses.index'))
                     ->group('Config')
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.config.campuses.*')),
 
                 NavigationItem::make('Majors')
-                    ->visible(fn(): bool => !is_super_admin())
+                    ->visible(fn(): bool => is_super_admin())
                     ->url(fn() => route('filament.admin.resources.config.majors.index'))
                     ->group('Config')
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.config.majors.*')),
