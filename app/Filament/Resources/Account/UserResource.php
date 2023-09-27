@@ -3,11 +3,16 @@
 namespace App\Filament\Resources\Account;
 
 use App\Filament\Resources\Account\UserResource\Pages;
+use App\Models\Config\Major;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -28,6 +33,99 @@ class UserResource extends Resource
     protected static ?int $navigationSort = 0;
 
     protected static string $view = 'filament.resources.users.pages.view-user';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\Hidden::make('uuid')
+                                    ->default(Str::uuid()->toString()),
+
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Name')
+                                    ->autofocus()
+                                    ->maxValue(255)
+                                    ->required()
+                                    ->placeholder('Enter name here'),
+
+                                Forms\Components\TextInput::make('email')
+                                    ->label('Email')
+                                    ->disabledOn('edit')
+                                    ->unique(User::class, 'email', ignoreRecord: true)
+                                    ->email()
+                                    ->maxValue(255)
+                                    ->required()
+                                    ->placeholder('Enter email here'),
+
+                                Forms\Components\TextInput::make('password')
+                                    ->label('Password')
+                                    ->password()
+                                    ->confirmed()
+                                    ->minValue(8)
+                                    ->maxValue(255)
+                                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                                    ->required()
+                                    ->helperText('Mật khẩu ít nhất phải có 8 ký tự!')
+                                    ->placeholder('Enter password here'),
+
+                                Forms\Components\TextInput::make('password_confirmation')
+                                    ->label('Re-enter the password')
+                                    ->password()
+                                    ->same('password')
+                                    ->maxValue(255)
+                                    ->required()
+                                    ->dehydrated(false)
+                                    ->placeholder('Enter re-enter the password here'),
+                            ])
+                            ->columns(2),
+                    ])
+                    ->columnSpan(['lg' => 2]),
+
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\Select::make('type_user')
+                                    ->options([
+                                        TYPE_USER_STUDENT => "Student",
+                                        TYPE_USER_ADMIN => "Admin",
+                                        TYPE_USER_SUPER_ADMIN => "Super admin",
+                                    ])
+                                    ->live()
+                                    ->default(TYPE_USER_STUDENT)
+                                    ->required()
+                                    ->native(false)
+                                    ->label('Type user')
+                                    ->afterStateUpdated(fn(Forms\Components\Select $component) => $component
+                                        ->getContainer()
+                                        ->getComponent('select')
+                                        ->getChildComponentContainer()
+                                        ->fill()),
+
+                                Forms\Components\Grid::make()
+                                    ->schema(fn(Forms\Get $get): array => match ($get('type_user')) {
+                                        TYPE_USER_STUDENT, TYPE_USER_ADMIN => [
+                                            Forms\Components\Select::make('major_id')
+                                                ->label('Major')
+                                                ->required()
+                                                ->options(Major::all()->pluck('name', 'id'))
+                                                ->native(false),
+                                        ],
+                                        default => [],
+                                    })
+                                    ->columns(1)
+                                    ->key('select')
+                            ]),
+                    ])
+                    ->columnSpan(['lg' => 1]),
+            ])
+            ->columns(3);
+    }
+
 
     public static function table(Table $table): Table
     {
@@ -79,6 +177,7 @@ class UserResource extends Resource
                         ])
                         ->toggleable(),
                 ])
+                ->defaultSort('id', 'desc')
                 ->filters([
                     Tables\Filters\TernaryFilter::make('email_verified_at')
                         ->label('Email verification')
