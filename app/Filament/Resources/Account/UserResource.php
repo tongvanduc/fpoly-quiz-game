@@ -91,12 +91,11 @@ class UserResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('type_user')
                                     ->options([
-                                        TYPE_USER_STUDENT => "Student",
                                         TYPE_USER_ADMIN => "Admin",
                                         TYPE_USER_SUPER_ADMIN => "Super admin",
                                     ])
                                     ->live()
-                                    ->default(TYPE_USER_STUDENT)
+                                    ->default(TYPE_USER_ADMIN)
                                     ->required()
                                     ->native(false)
                                     ->label('Type user')
@@ -108,7 +107,7 @@ class UserResource extends Resource
 
                                 Forms\Components\Grid::make()
                                     ->schema(fn(Forms\Get $get): array => match ($get('type_user')) {
-                                        TYPE_USER_STUDENT, TYPE_USER_ADMIN => [
+                                        TYPE_USER_ADMIN => [
                                             Forms\Components\Select::make('major_id')
                                                 ->label('Major')
                                                 ->required()
@@ -118,7 +117,9 @@ class UserResource extends Resource
                                         default => [],
                                     })
                                     ->columns(1)
-                                    ->key('select')
+                                    ->key('select'),
+
+                                Forms\Components\Hidden::make('email_verified_at')->default(date('Y-m-d H:i:s')),
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),
