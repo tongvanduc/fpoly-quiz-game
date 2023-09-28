@@ -21,4 +21,13 @@ class Major extends Model
         return $this->belongsTo(Campus::class, 'campus_id');
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (Major $major) {
+            if (empty($major->campus_id)) {
+                $campus_id = Major::query()->findOrFail(auth()->user()->major_id)->campus_id;
+                $major->campus_id = $campus_id;
+            }
+        });
+    }
 }

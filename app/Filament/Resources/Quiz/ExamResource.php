@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ExamResource extends Resource
@@ -93,38 +94,70 @@ class ExamResource extends Resource
                     ->columnSpan(['lg' => 2]),
 
                 Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make('Status')
-                            ->schema([
-                                Forms\Components\Toggle::make('is_active')
-                                    ->label('Is active')
-                                    ->helperText('This exam will be hidden from all list exams.')
-                                    ->default(true),
-
-                                Forms\Components\DateTimePicker::make('start_date')
-                                    ->label('Start date')
-                                    ->default(now())
-                                    ->afterOrEqual(now()->format('d-m-Y H'))
-                                    ->seconds(false)
-                                    ->required(),
-
-                                Forms\Components\DateTimePicker::make('end_date')
-                                    ->label('End date')
-                                    ->default(now())
-                                    ->seconds(false)
-                                    ->afterOrEqual('start_date')
-                                    ->required(),
-                            ]),
-                    ])
+                    ->schema(fn() => self::getSections())
                     ->columnSpan(['lg' => 1]),
             ])
             ->columns(3);
     }
 
+    public static function getSections(): array
+    {
+        $statusSection = Forms\Components\Section::make('Status')
+            ->schema([
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Is active')
+                    ->helperText('This exam will be hidden from all list exams.')
+                    ->default(true),
+
+                Forms\Components\DateTimePicker::make('start_date')
+                    ->label('Start date')
+                    ->default(now())
+                    ->afterOrEqual(now()->format('d-m-Y H'))
+                    ->seconds(false)
+                    ->required(),
+
+                Forms\Components\DateTimePicker::make('end_date')
+                    ->label('End date')
+                    ->default(now())
+                    ->seconds(false)
+                    ->afterOrEqual('start_date')
+                    ->required(),
+            ]);
+
+        if (is_super_admin()) {
+            $campusAndMajorSection = Forms\Components\Section::make('Campus and major')
+                ->schema([
+                    Forms\Components\Select::make('major_id')
+                        ->label('Major')
+                        ->options(fn() => self::getMajors())
+                        ->searchable()
+                        ->required(),
+                ]);
+
+            return [$campusAndMajorSection, $statusSection];
+        }
+
+        return [$statusSection];
+    }
+
+    private static function getMajors(): array
+    {
+        return Major::query()
+            ->with('campus')
+            ->orderBy('campus_id')
+            ->get()
+            ->map(fn(Major $major) => [
+                'label' => $major->name . ' - ' . $major->code . ' - Cơ sở ' . $major->campus->name,
+                'value' => $major->id,
+            ])
+            ->pluck('label', 'value')
+            ->toArray();
+    }
+
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
+            ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')

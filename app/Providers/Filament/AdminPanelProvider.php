@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Campuses')
-                    ->visible(fn(): bool => !is_super_admin())
+                    ->hidden(fn(): bool => !is_super_admin())
                     ->url(fn() => route('filament.admin.resources.config.campuses.index'))
                     ->group('Config')
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.config.campuses.*')),

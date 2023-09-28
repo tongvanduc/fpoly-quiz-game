@@ -17,7 +17,7 @@ class Campus extends Model
 
     public function majors()
     {
-        return $this->belongsToMany(Major::class, 'campus_majors');
+        return $this->hasMany(Major::class);
     }
 
 }

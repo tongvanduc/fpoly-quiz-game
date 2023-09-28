@@ -43,13 +43,9 @@ class Exam extends Model
     {
         static::creating(function (Exam $exam) {
 
-            if (empty($exam->major_id)) {
+            $exam->major_id ??= auth()->user()->major_id;
+            $exam->created_by ??= auth()->user()->id;
 
-                $exam->major_id = auth()->user()->major_id;
-
-                $exam->created_by = auth()->user()->id;
-
-            }
         });
     }
 
@@ -63,7 +59,7 @@ class Exam extends Model
 
     public function major()
     {
-        return $this->belongsTo(Major::class, 'major_id');
+        return $this->belongsTo(Major::class);
     }
 
 }

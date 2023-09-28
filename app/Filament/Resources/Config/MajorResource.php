@@ -17,9 +17,6 @@ class MajorResource extends Resource
 {
     protected static ?string $model = Major::class;
 
-    protected static ?string $navigationGroup = 'Config';
-
-    protected static ?string $label = 'Majors';
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -59,6 +56,11 @@ class MajorResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $userCampusId = Major::query()->findOrFail(auth()->user()->major_id)->campus_id;
+                $query->where('campus_id', $userCampusId);
+                return $query;
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')

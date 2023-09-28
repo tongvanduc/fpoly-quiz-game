@@ -51,6 +51,15 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Major created.');
 
         // Admin
+        $this->command->warn(PHP_EOL . 'Creating Super Admin User...');
+        $superAdmins = User::factory(1)->create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@fpt.edu.com',
+            'type_user' => TYPE_USER_SUPER_ADMIN,
+        ]);
+        $this->command->info('Super Admin User created.');
+
+        // Admin
         $this->command->warn(PHP_EOL . 'Creating Admin User...');
         $admins = User::factory(1)->create([
             'name' => 'Admin',

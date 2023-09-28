@@ -3,8 +3,7 @@
 namespace App\Filament\Resources\Config;
 
 use App\Filament\Resources\Config\CampusResource\Pages;
-
-//use App\Filament\Resources\Config\CampusResource\RelationManagers;
+use App\Filament\Resources\Config\MajorResource\Pages\ManageCampuses;
 use App\Models\Config\Campus;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,10 +17,7 @@ class CampusResource extends Resource
 {
     protected static ?string $model = Campus::class;
 
-//    protected static ?string $navigationGroup = 'Config';
     protected static bool $shouldRegisterNavigation = false;
-
-//    protected static ?string $label = 'Campuses';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -82,6 +78,7 @@ class CampusResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -105,7 +102,8 @@ class CampusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCampuses::route('/'),
+            'index' => ManageCampuses::route('/'),
+            'view' => Pages\ViewCampus::route('/{record}'),
         ];
     }
 }
