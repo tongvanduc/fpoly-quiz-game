@@ -67,7 +67,7 @@ class UserResource extends Resource
                                     ->confirmed()
                                     ->minValue(8)
                                     ->maxValue(255)
-                                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                                    ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                                     ->required()
                                     ->helperText('Mật khẩu ít nhất phải có 8 ký tự!')
                                     ->placeholder('Enter password here'),
@@ -131,64 +131,169 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
-                ->columns([
-                    Tables\Columns\TextColumn::make('name')
-                        ->label('Name')
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
+            ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id',
+                auth()->user()->major_id))
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
-                    Tables\Columns\TextColumn::make('email')
-                        ->label('Email')
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
-                    Tables\Columns\TextColumn::make('major.campus.name')
-                        ->label('Campus')
-                        ->default('')
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
+                Tables\Columns\TextColumn::make('major.campus.name')
+                    ->label('Campus')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
-                    Tables\Columns\TextColumn::make('major.name')
-                        ->label('Major')
-                        ->default('')
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
+                Tables\Columns\TextColumn::make('major.name')
+                    ->label('Major')
+                    ->default('')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
-                    Tables\Columns\BadgeColumn::make('email_verified_at')
-                        ->label('Email verification')
-                        ->sortable()
-                        ->toggleable()
-                        ->getStateUsing(fn(User $user
-                        ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
-                        ->colors([
-                            'success' => 'Verified',
-                            'danger' => 'Unverified',
-                        ]),
+                Tables\Columns\BadgeColumn::make('email_verified_at')
+                    ->label('Email verification')
+                    ->sortable()
+                    ->toggleable()
+                    ->getStateUsing(fn(User $user
+                    ): string => $user->email_verified_at?->isPast() ? 'Verified' : 'Unverified')
+                    ->colors([
+                        'success' => 'Verified',
+                        'danger' => 'Unverified',
+                    ]),
 
-                    Tables\Columns\BadgeColumn::make('type_user')
-                        ->label('Type user')
-                        ->sortable()
-                        ->colors([
-                            'success'
-                        ])
-                        ->toggleable(),
-                ])
-                ->defaultSort('id', 'desc')
-                ->filters([
-                    Tables\Filters\TernaryFilter::make('email_verified_at')
-                        ->label('Email verification')
-                        ->nullable()
-                        ->trueLabel('Verified')
-                        ->falseLabel('Unverified'),
-                ])
-                ->actions([
-                    Tables\Actions\ViewAction::make(),
-                ]);
+                Tables\Columns\BadgeColumn::make('type_user')
+                    ->label('Type user')
+                    ->sortable()
+                    ->colors([
+                        'success'
+                    ])
+                    ->toggleable(),
+            ])
+            ->defaultSort('id', 'desc')
+            ->filters([
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('Email verification')
+                    ->nullable()
+                    ->trueLabel('Verified')
+                    ->falseLabel('Unverified'),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('5xl')
+                    ->slideOver()
+                    ->visible(fn ($record) => $record->type_user == "admin")
+                    ->form([
+                        Forms\Components\Group::make()
+                            ->schema([
+                                Forms\Components\Group::make()
+                                    ->schema([
+                                        Forms\Components\Section::make()
+                                            ->schema([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->label('Name')
+                                                    ->autofocus()
+                                                    ->maxValue(255)
+                                                    ->required()
+                                                    ->placeholder('Enter name here'),
+
+                                                Forms\Components\TextInput::make('email')
+                                                    ->label('Email')
+                                                    ->disabledOn('edit')
+                                                    ->unique(User::class, 'email', ignoreRecord: true)
+                                                    ->email()
+                                                    ->maxValue(255)
+                                                    ->required()
+                                                    ->placeholder('Enter email here'),
+
+                                                Forms\Components\TextInput::make('password')
+                                                    ->label('Password')
+                                                    ->password()
+                                                    ->confirmed()
+                                                    ->minValue(8)
+                                                    ->nullable()
+                                                    ->maxValue(255)
+                                                    ->dehydrateStateUsing(fn($record, $state) =>
+                                                        $state ? $record->password : Hash::make($state))
+                                                    ->helperText('Mật khẩu ít nhất phải có 8 ký tự!')
+                                                    ->placeholder('Enter password here'),
+
+                                                Forms\Components\TextInput::make('password_confirmation')
+                                                    ->label('Re-enter the password')
+                                                    ->password()
+                                                    ->nullable()
+                                                    ->same('password')
+                                                    ->maxValue(255)
+                                                    ->dehydrated(false)
+                                                    ->placeholder('Enter re-enter the password here'),
+                                            ])
+                                            ->columns(2),
+                                    ])
+                                    ->columnSpan(['lg' => 2]),
+
+                                Forms\Components\Group::make()
+                                    ->schema([
+                                        Forms\Components\Section::make()
+                                            ->schema([
+                                                Forms\Components\Select::make('type_user')
+                                                    ->options([
+                                                        TYPE_USER_ADMIN => "Admin",
+                                                        TYPE_USER_SUPER_ADMIN => "Super admin",
+                                                    ])
+                                                    ->live()
+                                                    ->default(TYPE_USER_ADMIN)
+                                                    ->required()
+                                                    ->native(false)
+                                                    ->label('Type user')
+                                                    ->afterStateUpdated(fn(Forms\Components\Select $component
+                                                    ) => $component
+                                                        ->getContainer()
+                                                        ->getComponent('select')
+                                                        ->getChildComponentContainer()
+                                                        ->fill()),
+
+                                                Forms\Components\Grid::make()
+                                                    ->schema(fn(Forms\Get $get): array => match ($get('type_user')) {
+                                                        TYPE_USER_ADMIN => [
+                                                            Forms\Components\Select::make('major_id')
+                                                                ->label('Major')
+                                                                ->disabled()
+                                                                ->default(
+                                                                    fn($record) => $record->major->name
+                                                                )
+                                                                ->options(
+                                                                    fn($record) => [
+                                                                        $record->major->id => $record->major->name
+                                                                    ]
+                                                                )
+                                                                ->native(false),
+                                                        ],
+                                                        TYPE_USER_SUPER_ADMIN => [
+                                                            Forms\Components\Hidden::make('major_id')
+                                                                ->default(null)
+                                                        ],
+                                                        default => [],
+                                                    })
+                                                    ->columns(1)
+                                                    ->key('select'),
+                                            ]),
+                                    ])
+                                    ->columnSpan(['lg' => 1]),
+                            ])
+                            ->columns(3),
+                    ])
+            ]);
     }
 
     public static function getRelations(): array
