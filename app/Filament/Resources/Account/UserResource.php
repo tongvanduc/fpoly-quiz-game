@@ -119,7 +119,8 @@ class UserResource extends Resource
                                     ->columns(1)
                                     ->key('select'),
 
-                                Forms\Components\Hidden::make('email_verified_at')->default(date('Y-m-d H:i:s')),
+                                Forms\Components\Hidden::make('email_verified_at')
+                                    ->default(date('Y-m-d H:i:s')),
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),
