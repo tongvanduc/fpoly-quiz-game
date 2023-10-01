@@ -253,13 +253,13 @@ class ExamResource extends Resource
                     ])
                     ->action(function (array $data, Exam $exam) {
 
-                        $excelFile = Storage::disk('public')->path($data['file']);
+                        $excelFile = Storage::path($data['file']);
 
                         [$code, $message] = array_values(self::importQuestions($excelFile, $exam->id));
 
                         $notiType = $code == 200 ? 'success' : 'danger';
 
-                        Storage::disk('public')->delete($data['file']);
+                        Storage::delete($data['file']);
 
                         Notification::make()
                             ->title($message)
@@ -523,7 +523,7 @@ class ExamResource extends Resource
     {
         if (!empty($imgArr)) {
             foreach ($imgArr as $imgCode => $item) {
-                Storage::disk('public')->put($item['filename'], $item['content']);
+                Storage::put($item['filename'], $item['content']);
             }
         }
 
@@ -537,7 +537,7 @@ class ExamResource extends Resource
 
                     $content = file_get_contents($tempPath);
 
-                    Storage::disk('public')->put($item['filename'], $content);
+                    Storage::put($item['filename'], $content);
 
                     unlink($tempPath);
                 }
