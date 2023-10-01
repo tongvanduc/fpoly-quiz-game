@@ -28,3 +28,14 @@ if (!function_exists('is_super_admin')) {
         return $user->type_user === TYPE_USER_SUPER_ADMIN;
     }
 }
+
+if (!function_exists('catchError')) {
+    function catchError($data, $message)
+    {
+        if (($data == null || trim($data) == "")) {
+            throw new Exception($message);
+        }
+
+        return $data;
+    }
+}

@@ -5,18 +5,25 @@ namespace App\Filament\Resources\Quiz;
 use App\Filament\Resources\Quiz\ExamResource\Pages;
 use App\Filament\Widgets\ExamStats;
 use App\Models\Config\Campus;
-use App\Models\Config\CampusMajor;
 use App\Models\Config\Major;
 use App\Models\Quiz\Exam;
+use App\Models\Quiz\ExamAnswer;
 use App\Models\Quiz\ExamQuestion;
 use Carbon\Carbon;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ExamResource extends Resource
 {
@@ -124,7 +131,7 @@ class ExamResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
+            ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
@@ -234,6 +241,33 @@ class ExamResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('import')
+                    ->label('Import Questions')
+                    ->icon('heroicon-m-cloud-arrow-up')
+                    ->color('gray')
+                    ->form([
+                        Forms\Components\FileUpload::make('file')
+                            ->label('Import questions by excel file (xlsx)')
+                            ->required()
+                            ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                    ])
+                    ->action(function (array $data, Exam $exam) {
+
+                        $excelFile = Storage::disk('public')->path($data['file']);
+
+                        [$code, $message] = array_values(self::importQuestions($excelFile, $exam->id));
+
+                        $notiType = $code == 200 ? 'success' : 'danger';
+
+                        Storage::disk('public')->delete($data['file']);
+
+                        Notification::make()
+                            ->title($message)
+                            ->$notiType()
+                            ->send();
+
+                    }),
+
                 Tables\Actions\Action::make('detail')
                     ->label('Detail')
                     ->icon('heroicon-m-eye')
@@ -268,6 +302,13 @@ class ExamResource extends Resource
                 Tables\Actions\CreateAction::make()
                     ->modalWidth('5xl')
                     ->slideOver(),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('download-ex-import-file')
+                    ->label('Download example questions import file')
+                    ->action(function () {
+                        return response()->download(public_path(EXAMPLE_QUESTIONS_IMPORT_FILE));
+                    })
             ]);
     }
 
@@ -291,5 +332,216 @@ class ExamResource extends Resource
             'index' => Pages\ListExams::route('/'),
             'exam_detail' => Pages\ExamDetail::route('/{record}'),
         ];
+    }
+
+    private static function importQuestions($excelFile, $exam_id)
+    {
+        try {
+            $spreadsheet = IOFactory::load($excelFile);
+
+            $sheetCount = $spreadsheet->getSheetCount();
+
+            // Lấy ra sheet chứa câu hỏi
+            $questionsSheet = $spreadsheet->getSheet(0);
+
+            $questionsArr = $questionsSheet->toArray();
+
+            // Lấy ra sheet chứa ảnh
+            $imagesSheet = $sheetCount > 1 ? $spreadsheet->getSheet(1) : null;
+
+            [$questions, $answers, $imageCodeToQuestionId] = self::handleQuestionSheet($questionsArr, $exam_id);
+
+            // Lấy ra các đối tượng Drawing trong sheet
+            if ($imagesSheet) {
+
+                // Chuyển sheet thành một mảng dữ liệu
+                $sheetData = $imagesSheet->toArray();
+
+                $drawings = $imagesSheet->getDrawingCollection();
+
+                $imgArr = [];
+
+                $imgMemArr = [];
+
+                // Duyệt qua các đối tượng Drawing
+                foreach ($drawings as $index => $drawing) {
+
+                    // Kiểm tra xem đối tượng Drawing có phải là MemoryDrawing hay không
+                    [$code, $others] = $sheetData[$index + 1];
+
+                    if (empty($imageCodeToQuestionId[$code])) continue;
+
+                    $questionId = $imageCodeToQuestionId[$code];
+
+                    $filename = self::handleDrawingMimeType($drawing, $questionId, $imgArr, $imgMemArr);
+
+                    $questions[$questionId]['image'] = $filename;
+                }
+            }
+            DB::beginTransaction();
+
+            ExamQuestion::query()->insert($questions);
+
+            ExamAnswer::query()->insert($answers);
+
+            self::uploadQuestionImage($imgArr, $imgMemArr);
+
+            DB::commit();
+
+            return [
+                'code' => Response::HTTP_OK,
+                'message' => 'Import questions successfully'
+            ];
+
+        } catch (Exception $e) {
+            return data_when_error($e);
+        }
+    }
+
+    private static function handleQuestionSheet($questionSheet, $exam_id)
+    {
+
+        $maxQuestionId = ExamQuestion::query()->max('id') ?? 0;
+
+        $questions = [];
+
+        $answers = [];
+
+        $imageCodeToQuestionId = [];
+
+        foreach ($questionSheet as $key => $row) {
+            if ($key == 0) continue;
+
+            $line = $key + 1;
+
+            [$title_origin, $title_extra, $explain, $answer, $is_correct, $order, $imageCode] = $row;
+
+            if ($title_origin != null || trim($title_origin) != "") {
+
+                $questions[++$maxQuestionId] = [
+                    'id' => $maxQuestionId,
+                    'title_origin' => $title_origin ?? null,
+                    'title_extra' => $title_extra ?? null,
+                    'explain' => $explain ?? null,
+                    'quiz_exam_id' => $exam_id,
+                    'is_active' => 1,
+                    'image' => $imageCode ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                if (!empty($imageCode)) $imageCodeToQuestionId[$imageCode] = $maxQuestionId;
+
+                catchError($answer, "Missing answer in line {$line}");
+
+            }
+
+            if (!empty($answer)) {
+                $answers[] = [
+                    'content' => $answer,
+                    'is_true' => $is_correct == EXCEL_QUESTION['IS_CORRECT'] ? 1 : 0,
+                    'order' => $order,
+                    'is_active' => 1,
+                    'quiz_exam_question_id' => $maxQuestionId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+            }
+
+        }
+
+        return [
+            $questions,
+            $answers,
+            $imageCodeToQuestionId,
+        ];
+    }
+
+    private static function handleDrawingMimeType($drawing, $questionId, &$imgArr, &$imgMemArr)
+    {
+        if ($drawing instanceof \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing) {
+
+            // Lấy ảnh từ phương thức getImageResource
+            $image = $drawing->getImageResource();
+
+            // Xác định định dạng của ảnh dựa vào phương thức getMimeType
+            switch ($drawing->getMimeType()) {
+
+                case \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_PNG:
+                    $format = "png";
+                    break;
+
+                case \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_GIF:
+                    $format = "gif";
+                    break;
+
+                case \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_JPEG:
+                    $format = "jpg";
+                    break;
+
+            }
+
+            // Tạo một tên file cho ảnh
+            $filename = "image_question" . md5($questionId) . '_' . uniqid() . "." . $format;
+
+            $imgMemArr[] = [
+                'filename' => $filename,
+                'image' => $image,
+            ];
+
+        } else {
+
+            // Lấy ảnh từ phương thức getPath
+            $path = $drawing->getPath();
+
+            // Đọc nội dung của ảnh bằng cách sử dụng fopen và fread
+            $file = fopen($path, "r");
+
+            $content = "";
+
+            while (!feof($file)) {
+                $content .= fread($file, 1024);
+            }
+
+            // Lấy định dạng của ảnh từ phương thức getExtension
+            $format = $drawing->getExtension();
+
+            // Tạo một tên file cho ảnh
+            $filename = "image_question" . md5($questionId) . '_' . uniqid() . "." . $format;
+
+            $imgArr[] = [
+                'filename' => $filename,
+                'content' => $content
+            ];
+        }
+
+        return $filename;
+    }
+
+    private static function uploadQuestionImage($imgArr, $imgMemArr)
+    {
+        if (!empty($imgArr)) {
+            foreach ($imgArr as $imgCode => $item) {
+                Storage::disk('public')->put($item['filename'], $item['content']);
+            }
+        }
+
+        // Lưu ảnh
+        if (!empty($imgMemArr)) {
+            foreach ($imgMemArr as $item) {
+                if (!empty($imageQuestionArr[$imgCode])) {
+                    $tempPath = sys_get_temp_dir() . $item['filename'];
+
+                    imagepng($item['image'], $tempPath);
+
+                    $content = file_get_contents($tempPath);
+
+                    Storage::disk('public')->put($item['filename'], $content);
+
+                    unlink($tempPath);
+                }
+            }
+        }
     }
 }
