@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthenController;
 use App\Http\Controllers\API\Quiz\ExamController;
 use App\Http\Controllers\API\Quiz\ExamResultController;
+use App\Http\Controllers\API\Quiz\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,5 +35,10 @@ Route::middleware('auth:sanctum')
         Route::prefix('exam_results')
             ->group(function () {
                 Route::post('/', [ExamResultController::class, 'store']);
+            });
+
+        Route::prefix('tmp')
+            ->group(function () {
+                Route::post('quiz-result-next-question/{code}', [QuestionController::class, 'nextQuestion']);
             });
     });
