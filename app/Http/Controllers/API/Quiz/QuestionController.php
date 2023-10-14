@@ -53,15 +53,17 @@ class QuestionController extends Controller
             }
 
             $data['quiz_exam_id'] = $exam->id;
+            $data['code'] = $code;
+
             // Lưu thông tin kết quả của câu hỏi hiện tại
             TmpQuizResult::query()->create($data);
 
             // Xử lý tổng hợp dữ liệu điểm trả cho API
             $data = TmpQuizResult::query()
                 ->selectRaw('tmp_quiz_results.user_id, users.name, SUM(time) as total_time, SUM(point) as total_point')
-                ->join('users', 'users on users.id', '=', 'tmp_quiz_results.user_id')
-                ->where('code', $code)
-                ->groupBy('user_id')
+                ->join('users', 'users.id', '=', 'tmp_quiz_results.user_id')
+                ->where('tmp_quiz_results.code', $code)
+                ->groupBy('tmp_quiz_results.user_id')
                 ->get();
 
             // Call sang API để kích hoạt realtime live-score

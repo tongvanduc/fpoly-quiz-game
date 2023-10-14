@@ -309,6 +309,45 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "nextQuestion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2556|PpqP8x4oirMpBnSess3i2mHlHiX28gMy00FrQGeN4268bf76",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": 1,\r\n    \"quiz_exam_question_id\": 1,\r\n    \"answers\": [\r\n        2\r\n    ],\r\n    \"point\": 1,\r\n    \"time\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{HOST}}/api/tmp/quiz-result-next-question/MDFTYAUU",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"tmp",
+						"quiz-result-next-question",
+						"MDFTYAUU"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

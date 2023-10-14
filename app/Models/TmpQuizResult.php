@@ -13,6 +13,7 @@ class TmpQuizResult extends Model
         'user_id',
         'quiz_exam_id',
         'quiz_exam_question_id',
+        'code',
         'answers',
         'point',
         'time',
