@@ -42,8 +42,8 @@ class QuestionController extends Controller
                     'required',
                     "exists:quiz_exam_questions,id,id,{$request->quiz_exam_question_id}"
                 ],
-                'answers' => 'required|array',
-                'answers.*' => 'required|numeric',
+                'answers' => 'array',
+                'answers.*' => 'numeric',
                 'point' => 'required|numeric',
                 'time' => 'required|numeric',
             ]);

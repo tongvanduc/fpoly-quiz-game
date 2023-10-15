@@ -38,8 +38,8 @@ class ExamResultController extends Controller
                     'required',
                     "exists:quiz_exams,id,id,{$request->quiz_exam_id}"
                 ],
-                'results' => 'required|array',
-                'results.*' => 'required|array',
+                'results' => 'array',
+                'results.*' => 'array',
                 'point' => 'required|numeric',
                 'total_time' => 'required|numeric',
             ]);
