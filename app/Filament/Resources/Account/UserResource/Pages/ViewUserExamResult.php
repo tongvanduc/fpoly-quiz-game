@@ -63,7 +63,7 @@ class ViewUserExamResult extends Page implements HasForms
 
     public function getTitle(): string
     {
-        return __('Result of') . " {$this->user->name}";
+        return __('Kết quả của') . " {$this->user->name}";
     }
 
     public function form(Form $form): Form
@@ -97,37 +97,37 @@ class ViewUserExamResult extends Page implements HasForms
 
                         TextInput::make('name')
                             ->disabled()
-                            ->label('Name:')
+                            ->label('Tên:')
                             ->translateLabel()
                             ->placeholder(fn() => $this->exam->name),
 
                         TextInput::make('code')
                             ->disabled()
-                            ->label('Code:')
+                            ->label('Mã:')
                             ->translateLabel()
                             ->placeholder(fn() => $this->exam->code),
 
                         TextInput::make('point')
                             ->disabled()
-                            ->label('Point:')
+                            ->label('Điểm:')
                             ->translateLabel()
                             ->placeholder(fn() => $this->examResult->point . "/10"),
 
                         TextInput::make('total_time')
                             ->disabled()
-                            ->label('Total time:')
+                            ->label('Tổng thời gian:')
                             ->translateLabel()
                             ->placeholder($this->formatTotalTime($this->examResult->total_time)),
 
                         TextInput::make('start_date')
                             ->disabled()
-                            ->label('Start date:')
+                            ->label('Ngày bắt đầu:')
                             ->translateLabel()
                             ->placeholder(fn() => Carbon::make($this->exam->start_date)->format('d-m-Y')),
 
                         TextInput::make('start_date')
                             ->disabled()
-                            ->label('End date:')
+                            ->label('Ngày kết thúc:')
                             ->translateLabel()
                             ->placeholder(fn() => Carbon::make($this->exam->end_date)->format('d-m-Y')),
 
@@ -140,7 +140,7 @@ class ViewUserExamResult extends Page implements HasForms
 
     private function createExamResultSection(): Forms\Components\Section
     {
-        return Forms\Components\Section::make('Exam Result Detail')
+        return Forms\Components\Section::make('Chi tiết bài thi')
             ->schema([
                 Forms\Components\Repeater::make('examQuestion')
                     ->schema([
@@ -195,7 +195,7 @@ class ViewUserExamResult extends Page implements HasForms
 
     private function getAnsweredIds($questionsId)
     {
-        return $this->examResult->results[$questionsId];
+        return $this->examResult->results[$questionsId] ?? null;
     }
 
     private function getQuestionStatistics($questionsId): string|array
@@ -208,9 +208,9 @@ class ViewUserExamResult extends Page implements HasForms
 
         $numberOfCorrectAnswersByUser = collect($answers)->whereIn('id', $answeredIds)->where('is_true', true)->count();
 
-        $corrected = __('Corrected');
+        $corrected = __('Chính xác');
 
-        $incorrect = __('Incorrect');
+        $incorrect = __('Không chính xác');
 
         if ($numberOfCorrectAnswers === 1) {
 
