@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthenController;
 use App\Http\Controllers\API\Quiz\ExamController;
 use App\Http\Controllers\API\Quiz\ExamResultController;
+use App\Http\Controllers\API\Quiz\LiveScoreController;
 use App\Http\Controllers\API\Quiz\QuestionController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,4 +42,10 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::post('quiz-result-next-question/{code}', [QuestionController::class, 'nextQuestion']);
             });
+    });
+
+// Không cần đăng nhập cũng xem được thông qua Exam Code
+Route::prefix('live_score')
+    ->group(function () {
+        Route::get('refesh/{code}', [LiveScoreController::class, 'refesh']);
     });

@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('data_when_error')) {
     function data_when_error(Exception $exception)
     {
-        Log::error('Exception', [$exception]);
+        Log::error('ERROR', [
+            'REQUEST' => request()->all(),
+            'EXCEPTION' => $exception,
+        ]);
 
         if (app()->environment('production')) {
             return [];
