@@ -98,16 +98,6 @@
                             <span
                                 class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
                             >
-                                {{ $question->explain ?? '' }}
-                            </span>
-                        </td>
-
-                        <td
-                            class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
-                        >
-                            <span
-                                class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
-                            >
                                 @if($question->is_active == 0)
                                     <x-filament::icon
                                         :icon="$false"

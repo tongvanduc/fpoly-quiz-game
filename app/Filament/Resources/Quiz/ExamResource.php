@@ -55,7 +55,7 @@ class ExamResource extends Resource
                                     ->required()
                                     ->autofocus()
                                     ->maxValue(255)
-                                    ->placeholder('Name of the exam')
+                                    ->placeholder('Tên bài thi')
                                     ->live(onBlur: true),
 
                                 Forms\Components\TextInput::make('code')
@@ -77,7 +77,7 @@ class ExamResource extends Resource
                                             ->numeric()
                                             ->minValue(0)
                                             ->maxValue(255)
-                                            ->placeholder('Enter in seconds')
+                                            ->placeholder('Thời gian làm tối đa 1 câu. Đơn vị: giây')
                                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
                                             ->required(),
 
@@ -86,7 +86,7 @@ class ExamResource extends Resource
                                             ->numeric()
                                             ->minValue(0)
                                             ->maxValue(255)
-                                            ->placeholder('Maximum number of attempts')
+                                            ->placeholder('Số lần làm tối đa')
                                             ->rules(['regex:/^\d{1,6}(\.\d{0,2})?$/'])
                                             ->required(),
                                     ])
@@ -104,12 +104,13 @@ class ExamResource extends Resource
                         Forms\Components\Section::make('Status')
                             ->schema([
                                 Forms\Components\Toggle::make('is_active')
-                                    ->label('Is active')
-                                    ->helperText('This exam will be hidden from all list exams.')
+                                    ->label('Trạng thái kích hoạt')
+                                    ->helperText('Bài kiểm tra này sẽ bị ẩn khỏi tất cả các bài kiểm tra trong danh sách.')
                                     ->default(true),
 
                                 Forms\Components\DateTimePicker::make('start_date')
                                     ->label('Start date')
+                                    ->placeholder('Ngày bắt đầu')
                                     ->default(now())
                                     ->afterOrEqual(now()->format('d-m-Y H'))
                                     ->seconds(false)
@@ -117,6 +118,7 @@ class ExamResource extends Resource
 
                                 Forms\Components\DateTimePicker::make('end_date')
                                     ->label('End date')
+                                    ->placeholder('Ngày kết thúc')
                                     ->default(now())
                                     ->seconds(false)
                                     ->afterOrEqual('start_date')
@@ -134,67 +136,67 @@ class ExamResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id', auth()->user()->major_id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
+                    ->label('Tên bài thi')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('code')
-                    ->label('Code')
+                    ->label('Mã')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Image')
+                    ->label('Ảnh')
                     ->defaultImageUrl(asset('image/no-image-icon.png'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start_date')
-                    ->label('Start date')
+                    ->label('Ngày bắt đầu')
                     ->date('d-m-Y H:i')
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('end_date')
-                    ->label('End date')
+                    ->label('Ngày kết thúc')
                     ->date('d-m-Y H:i')
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('timer')
-                    ->label('Timer')
+                    ->label('Thời gian làm tối đa 1 câu')
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('max_of_tries')
-                    ->label('Max of tries')
+                    ->label('Số lần làm bài')
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Is active')
+                    ->label('Trạng thái kích hoạt')
                     ->boolean()
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('major.campus.name')
-                    ->label('Campus')
+                    ->label('Cơ sở')
                     ->default('')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('major.name')
-                    ->label('Major')
+                    ->label('Ngành')
                     ->default('')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label('Created By')
+                    ->label('Tạo bởi ai?')
                     ->default('')
                     ->searchable()
                     ->sortable()
@@ -204,7 +206,7 @@ class ExamResource extends Resource
             ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Is active')
+                    ->label('Trạng thái kích hoạt')
                     ->boolean()
                     ->trueLabel('Active')
                     ->falseLabel('Passive')
@@ -242,12 +244,12 @@ class ExamResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('import')
-                    ->label('Import Questions')
+                    ->label('Nhập câu hỏi')
                     ->icon('heroicon-m-cloud-arrow-up')
                     ->color('gray')
                     ->form([
                         Forms\Components\FileUpload::make('file')
-                            ->label('Import questions by excel file (xlsx)')
+                            ->label('Nhập câu hỏi bằng tệp excel (xlsx)')
                             ->required()
                             ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                     ])
@@ -277,7 +279,7 @@ class ExamResource extends Resource
                     }),
 
                 Tables\Actions\Action::make('question')
-                    ->label('Questions')
+                    ->label('Câu hỏi')
                     ->icon('heroicon-m-eye')
                     ->color('gray')
                     ->modalSubmitAction(false)
@@ -305,7 +307,7 @@ class ExamResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\Action::make('download-ex-import-file')
-                    ->label('Download example questions import file')
+                    ->label('Tải tệp nhập câu hỏi mẫu')
                     ->action(function () {
                         return response()->download(public_path(EXAMPLE_QUESTIONS_IMPORT_FILE));
                     })
@@ -390,7 +392,7 @@ class ExamResource extends Resource
 
             return [
                 'code' => Response::HTTP_OK,
-                'message' => 'Import questions successfully'
+                'message' => 'Nhập câu hỏi thành công'
             ];
 
         } catch (Exception $e) {
@@ -432,7 +434,7 @@ class ExamResource extends Resource
 
                 if (!empty($imageCode)) $imageCodeToQuestionId[$imageCode] = $maxQuestionId;
 
-                catchError($answer, "Missing answer in line {$line}");
+                catchError($answer, "Thiếu câu trả lời trong dòng {$line}");
 
             }
 
@@ -440,7 +442,7 @@ class ExamResource extends Resource
                 $answers[] = [
                     'content' => $answer,
                     'is_true' => $is_correct == EXCEL_QUESTION['IS_CORRECT'] ? 1 : 0,
-                    'order' => $order,
+                    'order' => $order ?: 0,
                     'is_active' => 1,
                     'quiz_exam_question_id' => $maxQuestionId,
                     'created_at' => now(),

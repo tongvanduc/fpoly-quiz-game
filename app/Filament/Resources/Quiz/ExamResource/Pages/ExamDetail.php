@@ -37,7 +37,7 @@ class ExamDetail extends Page implements HasTable
 
     public function getTitle(): string
     {
-        return __('Statistical of ') . $this->exam->name;
+        return __('Thống kê của ') . $this->exam->name;
     }
 
     protected function getActions(): array
@@ -74,7 +74,7 @@ class ExamDetail extends Page implements HasTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('Name')
+                    ->label('Tên')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
@@ -86,12 +86,12 @@ class ExamDetail extends Page implements HasTable
                     ->wrap(),
 
                 TextColumn::make('point')
-                    ->label('Point')
+                    ->label('Tổng điểm')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('total_time')
-                    ->label('Total time')
+                    ->label('Tổng thời gian')
                     ->searchable()
                     ->sortable(),
             ]);
