@@ -195,7 +195,7 @@ class ViewUserExamResult extends Page implements HasForms
 
     private function getAnsweredIds($questionsId)
     {
-        return $this->examResult->results[$questionsId] ?? null;
+        return $this->examResult->results[$questionsId] ?? [];
     }
 
     private function getQuestionStatistics($questionsId): string|array
