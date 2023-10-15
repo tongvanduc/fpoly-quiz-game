@@ -18,9 +18,10 @@ class QuestionController extends Controller
      * @return void
      */
     public function __construct(
-        public User         $user,
-        public Exam         $exam,
-        public ExamQuestion $examQuestion,
+        public User          $user,
+        public Exam          $exam,
+        public ExamQuestion  $examQuestion,
+        public TmpQuizResult $tmpQuizResult,
     )
     {
 
@@ -56,10 +57,10 @@ class QuestionController extends Controller
             $data['code'] = $code;
 
             // Lưu thông tin kết quả của câu hỏi hiện tại
-            TmpQuizResult::query()->create($data);
+            $this->tmpQuizResult->query()->create($data);
 
             // Xử lý tổng hợp dữ liệu điểm trả cho API
-            $data = TmpQuizResult::query()
+            $data = $this->tmpQuizResult->query()
                 ->selectRaw('tmp_quiz_results.user_id, users.name, SUM(time) as total_time, SUM(point) as total_point')
                 ->join('users', 'users.id', '=', 'tmp_quiz_results.user_id')
                 ->where('tmp_quiz_results.code', $code)
