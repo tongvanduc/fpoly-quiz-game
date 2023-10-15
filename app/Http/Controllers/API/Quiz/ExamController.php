@@ -7,6 +7,7 @@ use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamResult;
 use App\Models\User;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 
 class ExamController extends Controller
 {
@@ -33,6 +34,20 @@ class ExamController extends Controller
                     'exam_questions_only_active.exam_answers_only_active'
                 ])
                 ->where('code', $code)->firstOrFail();
+
+            $user = request()->user();
+
+            // Call sang API để kích hoạt realtime live-score
+            // Phần call này để thông báo vừa mới có SV tham gia Quiz
+            Http::post(env('ENDPOINT_LIVE_SCORE'), [
+                'flag' => 'init',
+                'code' => $code,
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'avatar' => random_avatar($user->name),
+                ]
+            ]);
 
             return \response()->json([
                 'exam' => $exam,

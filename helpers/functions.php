@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('data_when_error')) {
     function data_when_error(Exception $exception)
@@ -37,5 +39,31 @@ if (!function_exists('catchError')) {
         }
 
         return $data;
+    }
+}
+
+if (!function_exists('random_avatar')) {
+    function random_avatar($str)
+    {
+        $str = capitalized_case($str); // Chuyển sang dạng Capitalized Case
+
+        $pos = strrpos($str, ' '); // Tìm vị trí của khoảng trắng cuối cùng
+
+        if ($pos !== false) {
+            $lastUppercaseLetter = substr($str, $pos + 1, 1); // Lấy ra chữ cái viết hoa cuối cùng
+        } else {
+            preg_match('/[A-Z]/', $str, $matches);
+
+            $lastUppercaseLetter =  $matches[0];
+        }
+
+        return asset('avatars/' . $lastUppercaseLetter . '.png');
+    }
+}
+
+if (!function_exists('capitalized_case')) {
+    function capitalized_case($str)
+    {
+        return ucwords(strtolower($str));
     }
 }

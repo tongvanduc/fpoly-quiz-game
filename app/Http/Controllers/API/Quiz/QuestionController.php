@@ -9,6 +9,8 @@ use App\Models\TmpQuizResult;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
@@ -65,9 +67,17 @@ class QuestionController extends Controller
                 ->join('users', 'users.id', '=', 'tmp_quiz_results.user_id')
                 ->where('tmp_quiz_results.code', $code)
                 ->groupBy('tmp_quiz_results.user_id')
+                ->orderByDesc('total_point')
                 ->get();
 
             // Call sang API để kích hoạt realtime live-score
+            // Phần call này để thông báo sv đã thực hiện xong câu hỏi hiện tại
+            // Màn hình Live core update bảng xếp hạng
+            Http::post(env('ENDPOINT_LIVE_SCORE'), [
+                'flag' => 'next-question',
+                'code' => $code,
+                'data' => $data->toArray()
+            ]);
 
             return \response()->json([], Response::HTTP_OK);
         } catch (\Exception $exception) {
