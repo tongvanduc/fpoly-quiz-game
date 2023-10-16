@@ -441,7 +441,7 @@ class ExamResource extends Resource
             if (!empty($answer)) {
                 $answers[] = [
                     'content' => $answer,
-                    'is_true' => $is_correct == EXCEL_QUESTION['IS_CORRECT'] ? 1 : 0,
+                    'is_true' => !empty($is_correct) ? 1 : 0,
                     'order' => $order ?: 0,
                     'is_active' => 1,
                     'quiz_exam_question_id' => $maxQuestionId,

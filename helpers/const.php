@@ -20,7 +20,6 @@ const EXCEL_QUESTION = [
         'IMAGE_CODE_IMAGE_SHEET' => 0,
         'IMAGE' => 1,
     ],
-    'IS_CORRECT' => 'Đáp án đúng',
 ];
 
 const EXAMPLE_QUESTIONS_IMPORT_FILE = 'ex_files/example_questions_import.xlsx';
