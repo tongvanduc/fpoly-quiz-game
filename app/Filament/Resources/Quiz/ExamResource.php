@@ -93,6 +93,12 @@ class ExamResource extends Resource
                                     ->columns(2),
                             ]),
 
+                        Forms\Components\Select::make('major_id')
+                            ->label('Image')
+                            ->visible(fn(): bool => is_super_admin())
+                            ->options(Major::all()->pluck('name', 'id'))
+                            ->searchable(),
+
                         Forms\Components\FileUpload::make('image')
                             ->label('Image')
                             ->image(),
