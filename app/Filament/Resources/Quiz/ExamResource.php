@@ -243,62 +243,64 @@ class ExamResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('import')
-                    ->label('Nhập câu hỏi')
-                    ->icon('heroicon-m-cloud-arrow-up')
-                    ->color('gray')
-                    ->form([
-                        Forms\Components\FileUpload::make('file')
-                            ->label('Nhập câu hỏi bằng tệp excel (xlsx)')
-                            ->required()
-                            ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                    ])
-                    ->action(function (array $data, Exam $exam) {
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('import')
+                        ->label('Nhập câu hỏi')
+                        ->icon('heroicon-m-cloud-arrow-up')
+                        ->color('danger')
+                        ->form([
+                            Forms\Components\FileUpload::make('file')
+                                ->label('Nhập câu hỏi bằng tệp excel (xlsx)')
+                                ->required()
+                                ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                        ])
+                        ->action(function (array $data, Exam $exam) {
 
-                        $excelFile = Storage::path($data['file']);
+                            $excelFile = Storage::path($data['file']);
 
-                        [$code, $message] = array_values(self::importQuestions($excelFile, $exam->id));
+                            [$code, $message] = array_values(self::importQuestions($excelFile, $exam->id));
 
-                        $notiType = $code == 200 ? 'success' : 'danger';
+                            $notiType = $code == 200 ? 'success' : 'danger';
 
-                        Storage::delete($data['file']);
+                            Storage::delete($data['file']);
 
-                        Notification::make()
-                            ->title($message)
-                            ->$notiType()
-                            ->send();
+                            Notification::make()
+                                ->title($message)
+                                ->$notiType()
+                                ->send();
+                        }),
 
-                    }),
+                    Tables\Actions\Action::make('detail')
+                        ->label('Detail')
+                        ->icon('heroicon-m-eye')
+                        ->color('info')
+                        ->url(function ($record) {
+                            return route('filament.admin.resources.quiz.exams.exam_detail', ['record' => $record->id]);
+                        }),
 
-                Tables\Actions\Action::make('detail')
-                    ->label('Detail')
-                    ->icon('heroicon-m-eye')
-                    ->color('gray')
-                    ->url(function ($record) {
-                        return route('filament.admin.resources.quiz.exams.exam_detail', ['record' => $record->id]);
-                    }),
+                    Tables\Actions\Action::make('question')
+                        ->label('Câu hỏi')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->modalSubmitAction(false)
+                        ->slideOver()
+                        ->modalWidth('7xl')
+                        ->modalContent(
+                            function (Exam $exam) {
+                                $questions = ExamQuestion::where('quiz_exam_id', $exam->id)
+                                    ->orderBy('id', 'desc')
+                                    ->get();
 
-                Tables\Actions\Action::make('question')
-                    ->label('Câu hỏi')
-                    ->icon('heroicon-m-eye')
-                    ->color('gray')
-                    ->modalSubmitAction(false)
-                    ->slideOver()
-                    ->modalWidth('7xl')
-                    ->modalContent(
-                        function (Exam $exam) {
-                            $questions = ExamQuestion::where('quiz_exam_id', $exam->id)
-                                ->orderBy('id', 'desc')
-                                ->get();
+                                return view('filament.shows.question',
+                                    ['questions' => $questions, 'label' => $exam->name]);
+                            }
+                        ),
 
-                            return view('filament.shows.question',
-                                ['questions' => $questions, 'label' => $exam->name]);
-                        }
-                    ),
-
-                Tables\Actions\EditAction::make()
-                    ->modalWidth('5xl')
-                    ->slideOver(),
+                    Tables\Actions\EditAction::make()
+                        ->modalWidth('5xl')
+                        ->color('warning')
+                        ->slideOver(),
+                ]),
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()
