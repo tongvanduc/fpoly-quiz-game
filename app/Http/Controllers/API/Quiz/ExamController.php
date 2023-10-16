@@ -57,6 +57,22 @@ class ExamController extends Controller
         }
     }
 
+    public function getQuestionCount($code)
+    {
+        try {
+            $exam = $this->exam->query()
+                ->active()
+                ->with(['exam_questions_only_active',])
+                ->where('code', $code)->firstOrFail();
+
+            return \response()->json([
+                'question_count' => $exam->exam_questions_only_active()->count(),
+            ], Response::HTTP_OK);
+        } catch (\Exception $exception) {
+            return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function getResultByCode($code, $userID = null)
     {
         try {

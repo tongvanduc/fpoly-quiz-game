@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')
 
         Route::prefix('exams')
             ->group(function () {
+                Route::get('get-question-count/{code}', [ExamController::class, 'getQuestionCount']);
                 Route::get('get-info/{code}', [ExamController::class, 'getInfoByCode']);
                 Route::get('get-result/{code}/{userID?}', [ExamController::class, 'getResultByCode']);
                 Route::get('get-list-by-user-id/{userID}', [ExamController::class, 'getListByUserID']);
@@ -45,6 +46,11 @@ Route::middleware('auth:sanctum')
     });
 
 // Không cần đăng nhập cũng xem được thông qua Exam Code
+Route::prefix('exams')
+    ->group(function () {
+        Route::get('get-question-count/{code}', [ExamController::class, 'getQuestionCount']);
+    });
+
 Route::prefix('live_score')
     ->group(function () {
         Route::get('refesh/{code}', [LiveScoreController::class, 'refesh']);
