@@ -89,6 +89,7 @@ class MajorResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])

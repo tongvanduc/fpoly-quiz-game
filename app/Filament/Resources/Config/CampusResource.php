@@ -84,6 +84,7 @@ class CampusResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])

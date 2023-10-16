@@ -65,7 +65,7 @@ class ExamDetail extends Page implements HasTable
     {
         $query = ExamResult::query()
             ->where('quiz_exam_id', $this->examId)
-            ->orderBy('id', 'asc');
+            ->orderBy('id', 'desc');
 
         $this->count = $query->count();
 
@@ -73,6 +73,12 @@ class ExamDetail extends Page implements HasTable
 
         return $table
             ->columns([
+                TextColumn::make('user.id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable()
+                    ->wrap(),
+
                 TextColumn::make('user.name')
                     ->label('Tên')
                     ->searchable()
