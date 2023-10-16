@@ -135,6 +135,12 @@ class UserResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => is_super_admin() ? $query : $query->where('major_id',
                 auth()->user()->major_id))
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
