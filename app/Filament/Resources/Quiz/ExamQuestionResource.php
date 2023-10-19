@@ -131,6 +131,12 @@ class ExamQuestionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('title_origin')
                     ->label('Tiêu đề câu hỏi')
                     ->searchable()

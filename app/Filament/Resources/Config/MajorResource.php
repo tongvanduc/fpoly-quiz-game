@@ -60,6 +60,12 @@ class MajorResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
@@ -83,6 +89,7 @@ class MajorResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])

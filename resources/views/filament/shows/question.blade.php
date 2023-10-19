@@ -25,6 +25,9 @@
                 class="fi-ta-row transition duration-75, hover:bg-gray-50 dark:hover:bg-white/5"
             >
                 <th class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                    <span class="text-sm font-semibold text-gray-950 dark:text-white">Id</span>
+                </th>
+                <th class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                     <span class="text-sm font-semibold text-gray-950 dark:text-white">Title origin</span>
                 </th>
                 <th class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
@@ -51,6 +54,15 @@
                     <tr
                         class="fi-ta-row transition duration-75, hover:bg-gray-50 dark:hover:bg-white/5"
                     >
+                        <td
+                            class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
+                        >
+                            <span
+                                class="text-xs fi-ta-text-item inline-flex items-center gap-1.5 text-sm text-gray-950 dark:text-white"
+                            >
+                                {{ $question->id }}
+                            </span>
+                        </td>
                         <td
                             class="fi-ta-header-cell px-0.5 py-0.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
                         >
