@@ -350,14 +350,6 @@ class ExamResource extends Resource
         ];
     }
 
-    private function tableQuestion(Table $table): Table{
-        return
-            $table->columns([
-                Tables\Columns\TextColumn::make('timer')
-                    ->label('test')
-            ]);
-    }
-
     private static function importQuestions($excelFile, $exam_id)
     {
         try {
