@@ -23,3 +23,7 @@ const EXCEL_QUESTION = [
 ];
 
 const EXAMPLE_QUESTIONS_IMPORT_FILE = 'ex_files/example_questions_import.xlsx';
+
+const TTL_CACHE = 2 * 60 * 60; // 2 hours
+
+const PREFIX_CACHE = 'A';

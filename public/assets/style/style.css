@@ -1,0 +1,55 @@
+@keyframes progress {
+    0% { width: 0; }
+    100% { width: 60%; }
+  }
+  
+  .progress-bar {
+    background-color: green;
+    height: 10px;
+    width: 0;
+    animation: progress 2s ease-out forwards;
+  }
+  .success-row {
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    animation: moveRow 0.8s ease-in-out;
+  }
+
+  .errors-row {
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    animation: addRow 0.8s ease-in-out;
+  }
+  
+  @keyframes moveRow {
+    0% {
+    
+      transform: translateY(0);
+    }
+    100% {
+        background-color: #9cf6d5;
+      transform: translateY(-100%);
+    }
+  }
+
+  @keyframes addRow {
+    0% {
+      
+      transform: translateY(0);
+    }
+    100% {
+        background-color: #f4afaf;
+      transform: translateY(100%);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+ 
+
+   
