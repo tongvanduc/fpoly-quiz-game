@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz\Exam;
 use App\Models\Quiz\ExamResult;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class ExamController extends Controller
@@ -128,5 +130,47 @@ class ExamController extends Controller
         } catch (\Exception $exception) {
             return response()->json(data_when_error($exception), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function show($code)
+    {
+        if (empty($data = Exam::query()->where('code', $code)->first())) {
+            return [
+                'status' => false,
+                'message' => 'Exam not found!',
+            ];
+        }
+
+        Cache::forget('exam.' . $code);
+
+        return [
+            'status' => true,
+            'data' => $data,
+        ];
+    }
+
+    public function getResultByCodeFromCache($code)
+    {
+        return Cache::get('exam.' . $code, []);
+    }
+
+    public function postResultByCodeToCache(Request $request, $code): array
+    {
+
+        $dataFromCache = Cache::get('exam.' . $code, []);
+
+        $dataFromRequest = array_reduce((array)$request->data, function ($carry, $user) {
+            $key = PREFIX_CACHE . $user['user_id'];
+
+            $carry[$key] = $user;
+
+            return $carry;
+        }, []);
+
+        $data = array_merge($dataFromCache, $dataFromRequest);
+
+        Cache::put('exam.' . $code, $data, TTL_CACHE);
+
+        return array_values($data);
     }
 }

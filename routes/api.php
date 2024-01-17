@@ -5,6 +5,8 @@ use App\Http\Controllers\API\Quiz\ExamController;
 use App\Http\Controllers\API\Quiz\ExamResultController;
 use App\Http\Controllers\API\Quiz\LiveScoreController;
 use App\Http\Controllers\API\Quiz\QuestionController;
+use App\Models\Quiz\Exam;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,9 +51,17 @@ Route::middleware('auth:sanctum')
 Route::prefix('exams')
     ->group(function () {
         Route::get('get-question-count/{code}', [ExamController::class, 'getQuestionCount']);
+        Route::get('{code}', [ExamController::class, 'show']);
+    });
+
+Route::prefix('results')
+    ->group(function () {
+        Route::get('{code}', [ExamController::class, 'getResultByCodeFromCache']);
+        Route::post('{code}', [ExamController::class, 'postResultByCodeToCache']);
     });
 
 Route::prefix('live_score')
     ->group(function () {
         Route::get('refesh/{code}', [LiveScoreController::class, 'refesh']);
+        Route::get('/', [LiveScoreController::class, 'index']);
     });

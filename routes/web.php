@@ -11,3 +11,7 @@ Route::prefix('performance-testing')
         Route::get('index', [PerformanceTestingController::class, 'index']);
         Route::get('store', [PerformanceTestingController::class, 'store']);
     });
+
+Route::get('live-results', function () {
+    return view('live-results');
+});
