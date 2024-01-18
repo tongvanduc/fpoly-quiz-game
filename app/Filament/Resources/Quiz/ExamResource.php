@@ -94,7 +94,7 @@ class ExamResource extends Resource
                             ]),
 
                         Forms\Components\Select::make('major_id')
-                            ->label('Image')
+                            ->label('Major')
                             ->visible(fn(): bool => is_super_admin())
                             ->options(Major::all()->pluck('name', 'id'))
                             ->searchable(),
