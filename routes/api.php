@@ -63,5 +63,4 @@ Route::prefix('results')
 Route::prefix('live_score')
     ->group(function () {
         Route::get('refesh/{code}', [LiveScoreController::class, 'refesh']);
-        Route::get('/', [LiveScoreController::class, 'index']);
     });
