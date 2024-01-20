@@ -171,12 +171,3 @@ function updateTable() {
 
     document.querySelector("#table-body").innerHTML = useritem;
 }
-
-window.Echo.channel('result-live-score.' + examCode)
-    .listen('ResultLiveScoreEvent', function (response) {
-        // Xử lý dữ liệu nhận được tại đây
-
-        userprogess = response.data;
-        errorssort = 0;
-        updateTable();
-    });
